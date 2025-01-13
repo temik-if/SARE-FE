@@ -30,6 +30,7 @@ O projeto visa criar um sistema de agendamento online para facilitar o uso e a g
 /SARE-FE
 │
 ├── /src                # Código-fonte da aplicação React
+|   ├── /app            # 
 │   ├── /components     # Componentes reutilizáveis (ex.: botão)
 │   ├── /pages          # Páginas da aplicação (ex.: Login, Dashboard)
 │   ├── /context        # Arquivos Context API
