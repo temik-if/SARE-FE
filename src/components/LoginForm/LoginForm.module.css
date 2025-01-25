@@ -28,6 +28,7 @@
 }
 
 
+
 .label {
     margin-top: 28px;
     font-weight: 600;
@@ -96,6 +97,7 @@
     transition: all 0.3s;
 }
 
+
 .button__login {
     padding: 18px;
     margin-top: 48px;
@@ -115,6 +117,12 @@
 .button__login:hover {
     background-color: var(--secondary);
 }
+
+.button__login:disabled {
+    background-color: #e4a367;
+    cursor: not-allowed;
+}
+
 .button__google:hover {
     background-color: #f1f1f1;
 }
@@ -122,4 +130,12 @@
 .googleIcon {
     width: 24px;
     height: 24px;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    padding-left: 8px;
+    align-self: flex-start;
 }
