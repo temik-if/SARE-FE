@@ -1,0 +1,125 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+    padding: 24px;
+    width: 100%;
+   
+    max-width: 640px;
+    height: 80%;
+    max-height: 760px;
+    background: var(--form);
+    border-radius: 8px;
+}
+
+
+
+
+.form {
+    width: 100%;
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+
+.label {
+    margin-top: 28px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.input {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #292929;
+    transition: all 0.3s;
+}
+
+.input:hover, .input:focus {
+    background-color: rgba(255, 255, 255, 1);
+    color: black;
+}
+
+.email {
+    font-family: var(--secondary-font);
+}
+
+.passwordContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.eyeContainer {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 0.8rem;
+}
+
+.resetPassword {
+    font-size: 0.9rem;
+    margin: 12px 0;
+    align-self: center;
+}
+
+.resetLink {
+    margin-top: 12px;
+    color: var(--primary);
+    text-decoration: none;
+    align-self: flex-end;
+}
+
+.button {
+    margin-bottom: 24px;
+    width: 60%;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center;
+    transition: all 0.3s;
+}
+
+.button__login {
+    padding: 18px;
+    margin-top: 48px;
+    background-color: var(--primary);
+}
+
+.button__google {
+    padding: 14px;
+    background-color: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.button__login:hover {
+    background-color: var(--secondary);
+}
+.button__google:hover {
+    background-color: #f1f1f1;
+}
+
+.googleIcon {
+    width: 24px;
+    height: 24px;
+}
