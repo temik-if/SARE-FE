@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
+"use client";
 import "./globals.css";
 import Header from "../components/Header/Header";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-export const metadata: Metadata = {
-  title: "SARE - Sistema de Agendamento de Recursos Educacionais",
-  description: "Sistema de Agendamento de Recursos Educacionais",
-};
 
 export default function RootLayout({
   children,
@@ -13,13 +11,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <html lang="pt-br">
         <body>
           <Header />
           {children}
         </body>
       </html>
-    
+    </LocalizationProvider>
   );
 }

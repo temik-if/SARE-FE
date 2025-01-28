@@ -1,0 +1,23 @@
+.radioContainer {
+    display: flex;
+    padding-right: 16px;
+    padding-left: 6px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 12px 12px 36px;
+}
+
+.radioButton {
+    margin: 0;
+    color: var("--primary");
+}
+
+.radioButtonIcon {
+    color: var("--primary");
+}
+
+.radioButtonIcon.Mui-checked {
+    color: var("--primary");
+}
