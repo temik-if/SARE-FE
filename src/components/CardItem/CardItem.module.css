@@ -1,0 +1,29 @@
+
+.cardItem{
+    display: flex;
+    flex-direction: column;
+    background-color:var(--nav);
+    width: 413px;
+    height: 171px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.cardItem span:nth-of-type(1) {
+    font-family: "Karla", serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 35px;
+    color: white;
+}
+
+.cardItem span:nth-of-type(2){
+    font-family: "Karla", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 26px;
+    color: white;
+}
