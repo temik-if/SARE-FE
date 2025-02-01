@@ -2,13 +2,14 @@ import React from 'react'
 import styles from './ButtonPrimary.module.css'
 
 type ButtonPrimaryProps = {
+    isDisabled?: boolean,
     type?: 'button' | 'submit' | 'reset',
     label: string,
     onClick?: () => void
 }
 
-export default function ButtonPrimary({ type, label, onClick }: ButtonPrimaryProps) {
+export default function ButtonPrimary({ isDisabled, type, label, onClick }: ButtonPrimaryProps) {
   return (
-    <button type={type} className={styles.button} onClick={onClick}>{label}</button>
+    <button type={type} className={styles.button} onClick={onClick} disabled={isDisabled}>{label}</button>
   )
 }

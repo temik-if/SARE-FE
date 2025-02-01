@@ -29,3 +29,9 @@
     padding-bottom: 36px;
 }
 
+.infoMessage {
+    padding: 12px;
+    margin-top: 12px;
+    color: gray;
+}
+

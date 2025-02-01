@@ -27,7 +27,7 @@ export default function ShiftRadioGroup({
         onChange={(event) => setSelectedShift(event.target.value)}
       >
         <FormControlLabel
-          value={"Manhã"}
+          value={"Matutino"}
           className={styles.radioButton}
           control={
             <Radio
@@ -39,12 +39,12 @@ export default function ShiftRadioGroup({
               className={styles.radioButtonIcon}
             />
           }
-          label="Manhã"
+          label="Matutino"
         />
 
         <FormControlLabel
           className={styles.radioButton}
-          value={"Tarde"}
+          value={"Verspertino"}
           control={
             <Radio
               sx={{
@@ -55,12 +55,12 @@ export default function ShiftRadioGroup({
               className={styles.radioButtonIcon}
             />
           }
-          label="Tarde"
+          label="Vespertino"
         />
 
         <FormControlLabel
           className={styles.radioButton}
-          value="Noite"
+          value="Noturno"
           control={
             <Radio
               sx={{
@@ -71,7 +71,7 @@ export default function ShiftRadioGroup({
               className={styles.radioButtonIcon}
             />
           }
-          label="Noite"
+          label="Noturno"
         />
       </RadioGroup>
     </FormControl>

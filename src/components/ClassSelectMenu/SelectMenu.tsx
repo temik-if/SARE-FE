@@ -6,7 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
-import styles from "./ClassSelectMenu.module.css"
+import styles from "./SelectMenu.module.css"
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -19,40 +19,50 @@ const MenuProps = {
   },
 };
 
-const classes = ["1ª", "2ª", "3ª", "4ª", "5ª"];
+
 
 interface ClassSelectMenuProps {
+  label: string;
+  items: string[];
   selectedItems: string[];
   setSelectedItems: (items: string[]) => void;
 }
 
-export default function ClassSelectMenu({selectedItems, setSelectedItems}: ClassSelectMenuProps) {
+export default function SelectMenu({label, items, selectedItems, setSelectedItems}: ClassSelectMenuProps) {
   
 
   const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
     const {
       target: { value },
     } = event;
-    setSelectedItems(
-      typeof value === "string" ? value.split(",") : value
-    );
+
+    const updatedItems = typeof value === "string" ? value.split(",") : value;
+
+    
+    const sortedItems = updatedItems.sort((a, b) => {
+      const numA = parseInt(a, 10); 
+      const numB = parseInt(b, 10);
+      return numA - numB; 
+    });
+
+    setSelectedItems(sortedItems);
   };
 
   return (
     <div className={styles.classSelectContainer}>
       <FormControl sx={{ width: '100%' }}>
-        <InputLabel id="demo-multiple-checkbox-label">Aula</InputLabel>
+        <InputLabel id="demo-multiple-checkbox-label">{label}</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
           multiple
           value={selectedItems}
           onChange={handleChange}
-          input={<OutlinedInput label="Tag" />}
+          input={<OutlinedInput label={label} />}
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
-          {classes.map((name) => (
+          {items.map((name) => (
             <MenuItem key={name} value={name}>
               <Checkbox checked={selectedItems.includes(name)} />
               <ListItemText primary={name} />
