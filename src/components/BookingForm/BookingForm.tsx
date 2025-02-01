@@ -9,6 +9,8 @@ import ClassSelectMenu from "../ClassSelectMenu/ClassSelectMenu";
 
 export default function BookingForm() {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
+  const [selectedShift, setSelectedShift] = useState("Manhã"); 
+  const [selectedClasses, setSelectedClasses] = useState(["1ª", "2ª", "3ª", "4ª", "5ª"]);
 
   return (
     <div className={styles.container}>
@@ -38,12 +40,12 @@ export default function BookingForm() {
           <div>
             <h3>2 - Selecione um turno</h3>
             <div>
-              <ShiftRadioGroup />
+              <ShiftRadioGroup selectedShift={selectedShift} setSelectedShift={setSelectedShift} />
             </div>
           </div>
           <div>
             <h3>3 - Selecione a(s) aula(s)</h3>
-            <ClassSelectMenu />
+            <ClassSelectMenu selectedItems={selectedClasses} setSelectedItems={setSelectedClasses} />
           </div>
         </div>
 

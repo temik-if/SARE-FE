@@ -21,21 +21,19 @@ const MenuProps = {
 
 const classes = ["1ª", "2ª", "3ª", "4ª", "5ª"];
 
-export default function ClassSelectMenu() {
-  const [personName, setPersonName] = React.useState<string[]>([
-    "1ª",
-    "2ª",
-    "3ª",
-    "4ª",
-    "5ª",
-  ]);
+interface ClassSelectMenuProps {
+  selectedItems: string[];
+  setSelectedItems: (items: string[]) => void;
+}
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+export default function ClassSelectMenu({selectedItems, setSelectedItems}: ClassSelectMenuProps) {
+  
+
+  const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
+    setSelectedItems(
       typeof value === "string" ? value.split(",") : value
     );
   };
@@ -48,7 +46,7 @@ export default function ClassSelectMenu() {
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
           multiple
-          value={personName}
+          value={selectedItems}
           onChange={handleChange}
           input={<OutlinedInput label="Tag" />}
           renderValue={(selected) => selected.join(", ")}
@@ -56,7 +54,7 @@ export default function ClassSelectMenu() {
         >
           {classes.map((name) => (
             <MenuItem key={name} value={name}>
-              <Checkbox checked={personName.includes(name)} />
+              <Checkbox checked={selectedItems.includes(name)} />
               <ListItemText primary={name} />
             </MenuItem>
           ))}
