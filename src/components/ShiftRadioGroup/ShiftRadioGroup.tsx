@@ -27,7 +27,7 @@ export default function ShiftRadioGroup({
         onChange={(event) => setSelectedShift(event.target.value)}
       >
         <FormControlLabel
-          value={"Matutino"}
+          value="Matutino"
           className={styles.radioButton}
           control={
             <Radio
@@ -40,11 +40,23 @@ export default function ShiftRadioGroup({
             />
           }
           label="Matutino"
+          sx={{
+            width: "150px", // Certifique-se de que a largura fixa seja aplicada
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            transition: "all 0.3s ease", // Adiciona transição suave
+            "& .MuiFormControlLabel-label": {
+              color:
+                selectedShift === "Matutino" ? "var(--primary)" : "inherit",
+              fontWeight: selectedShift === "Matutino" ? "bold" : "inherit",
+            },
+          }}
         />
 
         <FormControlLabel
+          value="Vespertino"
           className={styles.radioButton}
-          value={"Verspertino"}
           control={
             <Radio
               sx={{
@@ -56,11 +68,23 @@ export default function ShiftRadioGroup({
             />
           }
           label="Vespertino"
+          sx={{
+            width: "150px", // Certifique-se de que a largura fixa seja aplicada
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            transition: "all 0.3s ease", // Adiciona transição suave
+            "& .MuiFormControlLabel-label": {
+              color:
+                selectedShift === "Vespertino" ? "var(--primary)" : "inherit",
+              fontWeight: selectedShift === "Vespertino" ? "bold" : "inherit",
+            },
+          }}
         />
 
         <FormControlLabel
-          className={styles.radioButton}
           value="Noturno"
+          className={styles.radioButton}
           control={
             <Radio
               sx={{
@@ -72,6 +96,17 @@ export default function ShiftRadioGroup({
             />
           }
           label="Noturno"
+          sx={{
+            width: "150px", // Certifique-se de que a largura fixa seja aplicada
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            transition: "all 0.3s ease", // Adiciona transição suave
+            "& .MuiFormControlLabel-label": {
+              color: selectedShift === "Noturno" ? "var(--primary)" : "inherit",
+              fontWeight: selectedShift === "Noturno" ? "bold" : "inherit",
+            },
+          }}
         />
       </RadioGroup>
     </FormControl>

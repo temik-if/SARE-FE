@@ -1,12 +1,12 @@
-import * as React from "react";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
+import React from "react";
 import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
 import ListItemText from "@mui/material/ListItemText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
-import styles from "./SelectMenu.module.css"
+import styles from "./SelectMenu.module.css";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -19,8 +19,6 @@ const MenuProps = {
   },
 };
 
-
-
 interface ClassSelectMenuProps {
   label: string;
   items: string[];
@@ -28,9 +26,13 @@ interface ClassSelectMenuProps {
   setSelectedItems: (items: string[]) => void;
 }
 
-export default function SelectMenu({label, items, selectedItems, setSelectedItems}: ClassSelectMenuProps) {
+export default function SelectMenu({
+  label,
+  items,
+  selectedItems,
+  setSelectedItems,
+}: ClassSelectMenuProps) {
   
-
   const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
     const {
       target: { value },
@@ -38,7 +40,7 @@ export default function SelectMenu({label, items, selectedItems, setSelectedItem
 
     const updatedItems = typeof value === "string" ? value.split(",") : value;
 
-    
+   
     const sortedItems = updatedItems.sort((a, b) => {
       const numA = parseInt(a, 10); 
       const numB = parseInt(b, 10);
@@ -50,7 +52,7 @@ export default function SelectMenu({label, items, selectedItems, setSelectedItem
 
   return (
     <div className={styles.classSelectContainer}>
-      <FormControl sx={{ width: '100%' }}>
+      <FormControl sx={{ width: "100%" }}>
         <InputLabel id="demo-multiple-checkbox-label">{label}</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
@@ -62,10 +64,24 @@ export default function SelectMenu({label, items, selectedItems, setSelectedItem
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
-          {items.map((name) => (
-            <MenuItem key={name} value={name}>
-              <Checkbox checked={selectedItems.includes(name)} />
-              <ListItemText primary={name} />
+          {items.map((item) => (
+            <MenuItem
+              key={item}
+              value={item}
+              className={
+                selectedItems.includes(item) ? styles.selectedItem : ""
+              }
+            >
+              <Checkbox
+                sx={{
+                  color: selectedItems.includes(item) ? "#50a151" : "default",
+                  "&.Mui-checked": {
+                    color: "#fff",
+                  },
+                }}
+                checked={selectedItems.includes(item)}
+              />
+              <ListItemText primary={item} />
             </MenuItem>
           ))}
         </Select>
