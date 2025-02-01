@@ -5,7 +5,7 @@ import ButtonPrimary from "../ButtonPrimary/ButtonPrimary";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import ShiftRadioGroup from "../ShiftRadioGroup/ShiftRadioGroup";
-import SelectMenu from "../ClassSelectMenu/SelectMenu";
+import SelectMenu from "../SelectMenu/SelectMenu";
 
 const classes = ["1ª", "2ª", "3ª", "4ª", "5ª"];
 const mockedResources = ["Notebook", "Projetor", "Laboratório de Ciências"];
