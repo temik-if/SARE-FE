@@ -3,8 +3,71 @@
   max-width: 1280px;
   margin: auto;
 }
+  .header {
+    background-color: #FA965D;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
 
-.header {
-  padding: 16px 0;
-    background-color: var(--nav);
+  .headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .responsiveLogo {
+    max-height: 50px;
+    width: auto;
+  }
+
+
+  .loginButton {
+    padding: 0.5rem 1.5rem;
+    background-color: #FFFFFF;
+    color: #EB7633;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+.loginButton:hover {
+  background-color: #f5f5f5;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .headerContent {
+    padding: 0.8rem 1.5rem;
+  }
+  
+  .responsiveLogo {
+    max-height: 45px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .headerContent {
+    padding: 0.6rem 1rem;
+  }
+
+  .responsiveLogo {
+    max-height: 40px;
+  }
+
+  .loginButton {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
 }
