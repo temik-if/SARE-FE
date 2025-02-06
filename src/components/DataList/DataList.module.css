@@ -1,0 +1,40 @@
+.container{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header ,.cards{
+    max-width: 1280px;
+    width: 67%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.header button{
+    width: 296px;
+    height: 55px;
+    background-color:#EB7633;
+    border-radius: 5px;
+    font-family: "Karla", serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    font-size: 24px;
+    color: white;
+    border: none;
+}
+
+
+
+
+.listcards{
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+}
