@@ -4,5 +4,5 @@
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  padding-top: 24px;
+  padding: 24px 0;
 }

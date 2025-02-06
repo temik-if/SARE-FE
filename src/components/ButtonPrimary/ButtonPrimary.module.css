@@ -1,0 +1,29 @@
+.button {
+  margin-bottom: 24px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: center;
+  transition: all 0.3s;
+  padding: 18px;
+  margin-top: 48px;
+  background-color: var(--primary);
+}
+
+.button:hover, .button:active {
+    background-color: var(--secondary);
+}
+
+.button:disabled {
+  background-color: #e4a367;
+  cursor: not-allowed;
+}
+
+@media (max-width: 576px) {
+    .button {
+    width: 100%;
+  }
+}
