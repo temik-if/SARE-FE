@@ -7,8 +7,6 @@ import { FcGoogle } from "react-icons/fc";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
-import { Button } from "primereact/button";
-import ButtonPrimary from "../ButtonPrimary/ButtonPrimary";
 
 type LoginFormInput = {
   email: string;
