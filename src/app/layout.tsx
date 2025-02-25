@@ -1,9 +1,7 @@
 "use client";
 import "./globals.css";
 import Header from "../components/Header/Header";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
+import Providers from "@/components/Providers/Providers";
 
 export default function RootLayout({
   children,
@@ -11,13 +9,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <html lang="pt-br">
-        <body>
+    <html lang="pt-br">
+      <body>
+        <Providers>
           <Header />
           {children}
-        </body>
-      </html>
-    </LocalizationProvider>
+        </Providers>
+      </body>
+    </html>
   );
 }
