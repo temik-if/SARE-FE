@@ -24,15 +24,14 @@ const authOptions: NextAuthOptions = {
           const { access_token, user } = response.data;
 
           if (user && access_token) {
-            
             return {
               id: user.id,
-              name: user.full_name, 
+              name: user.full_name,
               email: user.email,
               isActive: user.is_active,
               type: user.type,
               createdAt: user.createdAt,
-              accessToken: access_token, 
+              accessToken: access_token,
             };
           } else {
             console.error("Error during authorization:", response.data);
@@ -51,6 +50,17 @@ const authOptions: NextAuthOptions = {
   },
   jwt: {
     maxAge: 2 * 60 * 60, // 2 hours
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === "production", 
+        sameSite: "lax",
+        path: "/",
+      },
+    },
   },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
