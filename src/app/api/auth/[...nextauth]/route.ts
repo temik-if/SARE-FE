@@ -21,9 +21,9 @@ const authOptions: NextAuthOptions = {
             }
           );
 
-          const { user, accessToken } = response.data;
+          const { access_token, user } = response.data;
 
-          if (user && accessToken) {
+          if (user && access_token) {
             
             return {
               id: user.id,
@@ -32,9 +32,10 @@ const authOptions: NextAuthOptions = {
               isActive: user.is_active,
               type: user.type,
               createdAt: user.createdAt,
-              accessToken: accessToken, 
+              accessToken: access_token, 
             };
           } else {
+            console.error("Error during authorization:", response.data);
             return null;
           }
         } catch (error) {

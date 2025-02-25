@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
+import { signIn } from "next-auth/react";
 
 type LoginFormInput = {
   email: string;
@@ -31,7 +32,16 @@ const LoginForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<LoginFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
+    await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: true,
+      callbackUrl: "/",
+    }).then((response) => {
+      console.log(response);
+    });
+  }
 
   const email = watch("email");
   const password = watch("password");
