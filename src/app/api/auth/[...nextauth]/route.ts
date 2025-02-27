@@ -53,10 +53,10 @@ const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`,
+      name: `next-auth.session-token`,
       options: {
         httpOnly: true, 
-        secure: process.env.NODE_ENV === "production", 
+        secure: false, 
         sameSite: "lax",
         path: "/",
       },
