@@ -6,8 +6,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup"
+import * as yup from "yup";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { MdError } from "react-icons/md";
 
 type LoginFormInput = {
   email: string;
@@ -15,13 +17,18 @@ type LoginFormInput = {
 };
 
 const schema = yup.object().shape({
-  email: yup.string().email("Insira um endereço de e-mail válido").required("Insira o e-mail"),
+  email: yup
+    .string()
+    .email("Insira um endereço de e-mail válido")
+    .required("Insira o e-mail"),
   password: yup.string().required("Insira a senha"),
 });
 
 const LoginForm = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loginError, setLoginError] = useState("");
 
   const {
     register,
@@ -33,21 +40,23 @@ const LoginForm = () => {
   });
 
   const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
-      redirect: true,
-      callbackUrl: "/",
-    }).then((response) => {
-      console.log(response);
+      redirect: false,
     });
-  }
+
+    if (result?.error) {
+      setLoginError("E-mail ou senha incorretos");
+    } else if (result?.ok) {
+      router.push("/");
+    }
+  };
 
   const email = watch("email");
   const password = watch("password");
 
   useEffect(() => {
-    
     if (email && password) {
       setIsButtonDisabled(false);
     } else {
@@ -63,6 +72,7 @@ const LoginForm = () => {
     <>
       <div className={styles.container}>
         <h2 className={styles.title}>LOGIN</h2>
+
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles.form}
@@ -105,6 +115,14 @@ const LoginForm = () => {
               Clique aqui para recuperar
             </Link>
           </p>
+          {loginError && (
+            <div className={styles.loginError}>
+              <div className={styles.errIcon}>
+                <MdError />
+              </div>
+              <p>{loginError}</p>
+            </div>
+          )}
           <button
             className={`${styles.button} ${styles.button__login}`}
             type="submit"
