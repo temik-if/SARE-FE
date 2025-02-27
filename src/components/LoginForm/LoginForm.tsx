@@ -7,7 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MdError } from "react-icons/md";
 
@@ -26,9 +26,12 @@ const schema = yup.object().shape({
 
 const LoginForm = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loginError, setLoginError] = useState("");
+
+  
 
   const {
     register,
@@ -49,6 +52,7 @@ const LoginForm = () => {
     if (result?.error) {
       setLoginError("E-mail ou senha incorretos");
     } else if (result?.ok) {
+      window.location.reload();
       router.push("/");
     }
   };
@@ -57,6 +61,9 @@ const LoginForm = () => {
   const password = watch("password");
 
   useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
     if (email && password) {
       setIsButtonDisabled(false);
     } else {

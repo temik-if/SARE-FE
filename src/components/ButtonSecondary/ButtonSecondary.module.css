@@ -1,0 +1,22 @@
+.button {
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  align-self: center;
+  transition: all 0.3s;
+  padding: 12px 24px;
+  background-color: #f2f2f2;
+  margin: 0 8px;
+}
+
+.button:hover, .button:active {
+    background-color: white;
+}
+
+.button:disabled {
+  background-color: #c2c2c2;
+  cursor: not-allowed;
+}
