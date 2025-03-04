@@ -6,7 +6,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup"
+import * as yup from "yup";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { MdError } from "react-icons/md";
 
 type LoginFormInput = {
   email: string;
@@ -14,45 +17,85 @@ type LoginFormInput = {
 };
 
 const schema = yup.object().shape({
-  email: yup.string().email("Insira um endereço de e-mail válido").required("Insira o e-mail"),
+  email: yup
+    .string()
+    .email("Insira um endereço de e-mail válido")
+    .required("Insira o e-mail"),
   password: yup.string().required("Insira a senha"),
 });
 
 const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loginError, setLoginError] = useState("");
+
+  const errorMessages: Record<string, string> = {
+    unauthorized: "Seu e-mail não tem permissão para acessar. Contate um administrador.",
+    server_error: "Erro interno do servidor. Tente novamente mais tarde.",
+    invalid_token: "Falha na autenticação. Tente novamente.",
+    server_unreachable: "Não foi possível conectar ao servidor.",
+    unknown_error: "Ocorreu um erro inesperado.",
+  };
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<LoginFormInput>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<LoginFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
 
-  const email = watch("email");
-  const password = watch("password");
+    if (result?.error) {
+      setLoginError("E-mail ou senha incorretos");
+    } else if (result?.ok) {
+      window.location.reload();
+      router.push("/");
+    }
+  };
 
   useEffect(() => {
-    
-    if (email && password) {
-      setIsButtonDisabled(false);
-    } else {
-      setIsButtonDisabled(true);
+    if (session) {
+      router.push("/");
     }
-  }, [email, password]);
+  }, [router, session]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (!error) return;
+
+    setLoginError(errorMessages[error] || errorMessages["unknown_error"]);
+
+    setTimeout(
+      () => {
+        router.push("/login");
+      },
+      error === "unauthorized" ? 3000 : 5000
+    );
+  }, [searchParams, router]);
+
+  const handleGoogleLogin = async () => {
+    await signIn("google", { callbackUrl: "/" });
   };
 
   return (
     <>
       <div className={styles.container}>
         <h2 className={styles.title}>LOGIN</h2>
+
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles.form}
@@ -95,16 +138,24 @@ const LoginForm = () => {
               Clique aqui para recuperar
             </Link>
           </p>
+          {loginError && (
+            <div className={styles.loginError}>
+              <div className={styles.errIcon}>
+                <MdError />
+              </div>
+              <p>{loginError}</p>
+            </div>
+          )}
           <button
             className={`${styles.button} ${styles.button__login}`}
             type="submit"
-            disabled={isButtonDisabled}
           >
             ENTRAR
           </button>
           <button
             className={`${styles.button} ${styles.button__google}`}
-            type="submit"
+            type="button"
+            onClick={handleGoogleLogin}
           >
             <FcGoogle className={styles.googleIcon} />
             ENTRAR COM GOOGLE

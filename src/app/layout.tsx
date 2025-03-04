@@ -1,23 +1,24 @@
-"use client";
+import { getServerSession, Session } from "next-auth";
+import { GET } from "@/app/api/auth/[...nextauth]/route";
+import Header from "@/components/Header/Header";
+import Providers from "@/components/Providers/Providers";
 import "./globals.css";
-import Header from "../components/Header/Header";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const session = await getServerSession(GET) as Session | null;
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <html lang="pt-br">
-        <body>
-          <Header />
+    <html lang="pt-br">
+      <body>
+        <Providers session={session}>
+          <Header session={session} />
           {children}
-        </body>
-      </html>
-    </LocalizationProvider>
+        </Providers>
+      </body>
+    </html>
   );
 }

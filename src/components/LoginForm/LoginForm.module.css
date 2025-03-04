@@ -69,7 +69,7 @@
 
 .resetPassword {
   font-size: 0.9rem;
-  margin: 12px 0;
+  margin: 12px 0 24px 0;
   align-self: center;
 }
 
@@ -95,7 +95,7 @@
 
 .button__login {
   padding: 18px;
-  margin-top: 48px;
+  margin-top: 36px;
   background-color: var(--primary);
 }
 
@@ -128,11 +128,34 @@
 }
 
 .error {
-  color: red;
+  color: var(--error);
   font-size: 0.9rem;
   margin-top: 4px;
   padding-left: 8px;
   align-self: flex-start;
+}
+
+.loginError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--error);
+  font-size: 1.2rem;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--error);
+  background-color: rgb(255, 187, 187);
+  padding: 12px;
+  transition: all 0.3s;
+}
+
+.loginError>p {
+  font-size: 1rem;
+}
+
+.errIcon {
+  display: flex;
+  margin-right: 12px;
 }
 
 @media (max-width: 576px) {
