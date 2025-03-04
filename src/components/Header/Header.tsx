@@ -14,7 +14,6 @@ type HeaderProps = {
 
 export default function Header({ session }: HeaderProps) {
   const router = useRouter();
-  console.log(session);
 
   const handleClick = () => {
     if (session) {

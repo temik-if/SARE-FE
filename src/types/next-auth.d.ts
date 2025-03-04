@@ -19,5 +19,6 @@ declare module "next-auth" {
       createdAt: string;
     };
     accessToken?: string;
+    idToken?: string;
   }
 }

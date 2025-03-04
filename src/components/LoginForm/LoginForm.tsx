@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MdError } from "react-icons/md";
 
 type LoginFormInput = {
@@ -25,18 +25,23 @@ const schema = yup.object().shape({
 });
 
 const LoginForm = () => {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loginError, setLoginError] = useState("");
 
-  
+  const errorMessages: Record<string, string> = {
+    unauthorized: "Seu e-mail não tem permissão para acessar. Contate um administrador.",
+    server_error: "Erro interno do servidor. Tente novamente mais tarde.",
+    invalid_token: "Falha na autenticação. Tente novamente.",
+    server_unreachable: "Não foi possível conectar ao servidor.",
+    unknown_error: "Ocorreu um erro inesperado.",
+  };
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<LoginFormInput>({
     resolver: yupResolver(schema),
@@ -57,22 +62,33 @@ const LoginForm = () => {
     }
   };
 
-  const email = watch("email");
-  const password = watch("password");
-
   useEffect(() => {
     if (session) {
       router.push("/");
     }
-    if (email && password) {
-      setIsButtonDisabled(false);
-    } else {
-      setIsButtonDisabled(true);
-    }
-  }, [email, password]);
+  }, [router, session]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (!error) return;
+
+    setLoginError(errorMessages[error] || errorMessages["unknown_error"]);
+
+    setTimeout(
+      () => {
+        router.push("/login");
+      },
+      error === "unauthorized" ? 3000 : 5000
+    );
+  }, [searchParams, router]);
+
+  const handleGoogleLogin = async () => {
+    await signIn("google", { callbackUrl: "/" });
   };
 
   return (
@@ -133,13 +149,13 @@ const LoginForm = () => {
           <button
             className={`${styles.button} ${styles.button__login}`}
             type="submit"
-            disabled={isButtonDisabled}
           >
             ENTRAR
           </button>
           <button
             className={`${styles.button} ${styles.button__google}`}
-            type="submit"
+            type="button"
+            onClick={handleGoogleLogin}
           >
             <FcGoogle className={styles.googleIcon} />
             ENTRAR COM GOOGLE

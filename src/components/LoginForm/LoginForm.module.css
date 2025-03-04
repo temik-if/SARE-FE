@@ -145,7 +145,7 @@
   border-radius: 8px;
   border: 1px solid var(--error);
   background-color: rgb(255, 187, 187);
-  padding: 8px 0;
+  padding: 12px;
   transition: all 0.3s;
 }
 
