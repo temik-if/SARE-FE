@@ -78,7 +78,7 @@ export default function BookingForm() {
 
         <div className={styles.formSection}>
           <div>
-            <h3>3 - Selecione o(s) recurso(s)</h3>
+            <h3>4 - Selecione o(s) recurso(s)</h3>
             {selectedClasses.length === 0 ? (
               <div>
                 <h3 className={styles.infoMessage}>
