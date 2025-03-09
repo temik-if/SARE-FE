@@ -139,7 +139,7 @@ export default function UserForm() {
                     
 
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Numero de Serie</label>
+                    <label className={styles.label}>Número de série</label>
                     <input
                       type="text"
                       name="serial_number"
@@ -153,7 +153,7 @@ export default function UserForm() {
             }
               </div> : null
             }
-                    
+
             <button type="submit" className={styles.submitButton}>
               Cadastrar
             </button>
