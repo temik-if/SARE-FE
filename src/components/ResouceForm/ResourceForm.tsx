@@ -20,6 +20,7 @@ interface FormDataResource {
 type FormData = FormDataSala | FormDataResource;
 
 export default function ResourceForm() {
+  
   const [selectedResource, setSelectedResource] = useState<string>('');
   const [status] = useState<string>('AVAILABLE');
   
@@ -163,7 +164,10 @@ export default function ResourceForm() {
             <p>Seu cadastro foi concluído com sucesso.</p>
             <button
               className={styles.popupButton}
-              onClick={() => setShowSuccessPopup(false)}
+              onClick={() => {
+                setShowSuccessPopup(false);
+                window.location.reload();
+              }}
             >
               OK
             </button>
