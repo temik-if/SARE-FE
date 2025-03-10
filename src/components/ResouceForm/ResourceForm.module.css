@@ -61,9 +61,13 @@
   border-color: #007bff;
 }
 
-.input.error {
+.error {
   border-color: #ff4444;
 }
+.error {
+  color:#E56217;
+  font-size: small;
+ }
 
 .passwordGroup {
   position: relative;
