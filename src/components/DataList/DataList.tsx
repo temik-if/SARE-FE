@@ -8,9 +8,10 @@ interface ListDadosProps {
   dataList: { id: number; data1: string; data2: string }[];
   listType: string;
   onDeleteUser?: (user: any) => void;
+  onEditUser?: (user: any) => void; 
 }
 
-export default function ListDados({ title, buttonLabel, dataList, listType, onDeleteUser }: ListDadosProps) {
+export default function ListDados({ title, buttonLabel, dataList, listType, onDeleteUser, onEditUser }: ListDadosProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -27,6 +28,7 @@ export default function ListDados({ title, buttonLabel, dataList, listType, onDe
               data2={item.data2} 
               type={listType}
               onDelete={() => onDeleteUser && onDeleteUser(item)}
+              onEdit={() => onEditUser && onEditUser(item)} 
             />
           ))}
         </div>
