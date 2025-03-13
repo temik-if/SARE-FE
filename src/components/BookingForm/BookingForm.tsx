@@ -11,6 +11,7 @@ import { IBookingCreate } from "@/types/booking";
 import { resourceService } from "@/service/resourceService";
 import { IResource } from "@/types/resource";
 import BookingModal from "../BookingModal/BookingModal";
+import PopUp from "../PopUp/PopUp";
 
 const classes = ["1ª", "2ª", "3ª", "4ª", "5ª"];
 
@@ -28,6 +29,8 @@ export default function BookingForm() {
     classes: "",
     resources: "",
   });
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+  const [popUpMessage, setPopUpMessage] = useState("");
 
   const mapShift = (shift: string): "MORNING" | "AFTERNOON" | "EVENING" => {
     switch (shift) {
@@ -104,10 +107,16 @@ export default function BookingForm() {
           setSelectedClasses(classes);
           setSelectedResources([]);
           setAvailableResources([]);
+          setResourcesReady(false)
+          setPopUpMessage("Agendamento realizado com sucesso!")
+          setIsPopUpOpen(true)
         }
+
         
       } catch (error) {
         console.error(`Erro ao agendar ${resourceName}:`, error);
+        setPopUpMessage("Erro ao realizar agendamento. Tente novamente.")
+        setIsPopUpOpen(true)
         return; 
       }
     }
@@ -134,6 +143,11 @@ export default function BookingForm() {
         }}
         data = {modalData} 
       />
+      <PopUp 
+        isOpen={isPopUpOpen}
+        onConfirm={() => setIsPopUpOpen(false)}
+        message={popUpMessage}
+        />
       <form
         className={styles.form}
         action="submit"
