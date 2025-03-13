@@ -12,16 +12,18 @@ import { resourceService } from "@/service/resourceService";
 import { IResource } from "@/types/resource";
 import BookingModal from "../BookingModal/BookingModal";
 import PopUp from "../PopUp/PopUp";
+import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 
 const classes = ["1ª", "2ª", "3ª", "4ª", "5ª"];
 
 export default function BookingForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [selectedShift, setSelectedShift] = useState("Matutino");
   const [selectedClasses, setSelectedClasses] = useState(classes);
   const [selectedResources, setSelectedResources] = useState<string[]>([]);
   const [availableResources, setAvailableResources] = useState<IResource[]>([]);
-  const [resourcesReady, setResourcesReady] = useState(false)
+  const [resourcesReady, setResourcesReady] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState({
     date: "",
@@ -47,7 +49,7 @@ export default function BookingForm() {
 
   const fetchAvailableResources = async () => {
     if (!selectedDate) return;
-    setResourcesReady(false)
+    setResourcesReady(false);
     const dateStr = selectedDate.format("YYYY-MM-DD");
 
     const shiftStr = mapShift(selectedShift);
@@ -55,7 +57,7 @@ export default function BookingForm() {
     const classArray = selectedClasses.map((item) =>
       parseInt(item.replace(/\D/g, ""))
     );
-    
+
     try {
       const resources = await resourceService.getAvailable(
         dateStr,
@@ -63,7 +65,7 @@ export default function BookingForm() {
         classArray.join(",")
       );
       setAvailableResources(resources);
-      setResourcesReady(true)
+      setResourcesReady(true);
     } catch (error) {
       console.error("Erro ao buscar recursos disponíveis", error);
       setAvailableResources([]);
@@ -75,6 +77,7 @@ export default function BookingForm() {
   }, [selectedDate, selectedShift, selectedClasses]);
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     const shift = mapShift(selectedShift);
     const date = selectedDate!.format("YYYY-MM-DD");
     const classArray = selectedClasses.map((item) =>
@@ -107,17 +110,17 @@ export default function BookingForm() {
           setSelectedClasses(classes);
           setSelectedResources([]);
           setAvailableResources([]);
-          setResourcesReady(false)
-          setPopUpMessage("Agendamento realizado com sucesso!")
-          setIsPopUpOpen(true)
+          setResourcesReady(false);
+          setPopUpMessage("Agendamento realizado com sucesso!");
+          setIsLoading(false);
+          setIsPopUpOpen(true);
         }
-
-        
       } catch (error) {
         console.error(`Erro ao agendar ${resourceName}:`, error);
-        setPopUpMessage("Erro ao realizar agendamento. Tente novamente.")
-        setIsPopUpOpen(true)
-        return; 
+        setIsLoading(false);
+        setPopUpMessage("Erro ao realizar agendamento. Tente novamente.");
+        setIsPopUpOpen(true);
+        return;
       }
     }
   };
@@ -133,113 +136,115 @@ export default function BookingForm() {
   };
 
   return (
-    <div className={styles.container}>
-      <BookingModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={() => {
-          handleSubmit()
-          setModalOpen(false);
-        }}
-        data = {modalData} 
-      />
-      <PopUp 
-        isOpen={isPopUpOpen}
-        onConfirm={() => setIsPopUpOpen(false)}
-        message={popUpMessage}
+    <>
+      {isLoading && <LoadingOverlay />}
+      <div className={styles.container}>
+        <BookingModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={() => {
+            handleSubmit();
+            setModalOpen(false);
+          }}
+          data={modalData}
         />
-      <form
-        className={styles.form}
-        action="submit"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleOpenModal();
-        }}
-      >
-        <div className={styles.formInner}>
-          <div className={styles.formSection}>
-            <div className={styles.datePickerContainer}>
-              <h3>1 - Selecione uma data</h3>
-              <DatePicker
-                disablePast
-                slotProps={{
-                  textField: {
-                    style: {
-                      paddingLeft: "12px",
-                      paddingRight: "12px",
+        <PopUp
+          isOpen={isPopUpOpen}
+          onConfirm={() => setIsPopUpOpen(false)}
+          message={popUpMessage}
+        />
+        <form
+          className={styles.form}
+          action="submit"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleOpenModal();
+          }}
+        >
+          <div className={styles.formInner}>
+            <div className={styles.formSection}>
+              <div className={styles.datePickerContainer}>
+                <h3>1 - Selecione uma data</h3>
+                <DatePicker
+                  disablePast
+                  slotProps={{
+                    textField: {
+                      style: {
+                        paddingLeft: "12px",
+                        paddingRight: "12px",
+                      },
                     },
-                  },
-                  openPickerIcon: {
-                    style: {
-                      color: "#EB7633",
+                    openPickerIcon: {
+                      style: {
+                        color: "#EB7633",
+                      },
                     },
-                  },
-                }}
-                value={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-              />
-            </div>
-            <div>
-              <h3>2 - Selecione um turno</h3>
+                  }}
+                  value={selectedDate}
+                  onChange={(date) => setSelectedDate(date)}
+                />
+              </div>
               <div>
-                <ShiftRadioGroup
-                  selectedShift={selectedShift}
-                  setSelectedShift={setSelectedShift}
+                <h3>2 - Selecione um turno</h3>
+                <div>
+                  <ShiftRadioGroup
+                    selectedShift={selectedShift}
+                    setSelectedShift={setSelectedShift}
+                  />
+                </div>
+              </div>
+              <div>
+                <h3>3 - Selecione a(s) aula(s)</h3>
+                <SelectMenu
+                  label="Aula"
+                  items={classes}
+                  selectedItems={selectedClasses}
+                  setSelectedItems={setSelectedClasses}
                 />
               </div>
             </div>
-            <div>
-              <h3>3 - Selecione a(s) aula(s)</h3>
-              <SelectMenu
-                label="Aula"
-                items={classes}
-                selectedItems={selectedClasses}
-                setSelectedItems={setSelectedClasses}
-              />
+
+            <div className={styles.formSection}>
+              <div>
+                <h3>4 - Selecione o(s) recurso(s)</h3>
+                {selectedClasses.length === 0 ? (
+                  <div>
+                    <h3 className={styles.infoMessage}>
+                      Selecione pelo menos uma aula.
+                    </h3>
+                  </div>
+                ) : !resourcesReady ? (
+                  <div>
+                    <h3 className={styles.infoMessage}>
+                      Carregando recursos disponíveis...
+                    </h3>
+                  </div>
+                ) : availableResources.length === 0 ? (
+                  <div>
+                    <h3 className={styles.infoMessage}>
+                      Não há recursos disponíveis para esta data e horário.
+                    </h3>
+                  </div>
+                ) : (
+                  <SelectMenu
+                    label="Selecione"
+                    items={availableResources.map((r) => r.name)}
+                    selectedItems={selectedResources}
+                    setSelectedItems={setSelectedResources}
+                  />
+                )}
+              </div>
             </div>
           </div>
-
-          <div className={styles.formSection}>
-            <div>
-              <h3>4 - Selecione o(s) recurso(s)</h3>
-              {selectedClasses.length === 0 ? (
-                <div>
-                  <h3 className={styles.infoMessage}>
-                    Selecione pelo menos uma aula.
-                  </h3>
-                </div>
-              ) : !resourcesReady ? (
-                <div>
-
-                <h3 className={styles.infoMessage}>
-                    Carregando recursos disponíveis...
-                  </h3>
-                </div>
-              ): availableResources.length === 0 ? (
-                <div>
-                  <h3 className={styles.infoMessage}>
-                    Não há recursos disponíveis para esta data e horário.
-                  </h3>
-                </div>
-              ) : (
-                <SelectMenu
-                  label="Selecione"
-                  items={availableResources.map((r) => r.name)}
-                  selectedItems={selectedResources}
-                  setSelectedItems={setSelectedResources}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-        <ButtonPrimary
-          isDisabled={
-            !(selectedClasses.length > 0 && selectedResources.length > 0)
-          }
-          type="submit"
-          label="REALIZAR AGENDAMENTO"
-        />
-      </form>
-    </div>
+          <ButtonPrimary
+            isDisabled={
+              !(selectedClasses.length > 0 && selectedResources.length > 0)
+            }
+            type="submit"
+            label="REALIZAR AGENDAMENTO"
+          />
+        </form>
+      </div>
+    </>
   );
 }
