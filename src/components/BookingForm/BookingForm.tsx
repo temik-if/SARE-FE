@@ -10,21 +10,24 @@ import { bookingService } from "@/service/bookingService";
 import { IBookingCreate } from "@/types/booking";
 import { resourceService } from "@/service/resourceService";
 import { IResource } from "@/types/resource";
+import BookingModal from "../BookingModal/BookingModal";
 
 const classes = ["1ª", "2ª", "3ª", "4ª", "5ª"];
 
 export default function BookingForm() {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [selectedShift, setSelectedShift] = useState("Matutino");
-  const [selectedClasses, setSelectedClasses] = useState([
-    "1ª",
-    "2ª",
-    "3ª",
-    "4ª",
-    "5ª",
-  ]);
+  const [selectedClasses, setSelectedClasses] = useState(classes);
   const [selectedResources, setSelectedResources] = useState<string[]>([]);
   const [availableResources, setAvailableResources] = useState<IResource[]>([]);
+  const [resourcesReady, setResourcesReady] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({
+    date: "",
+    shift: "",
+    classes: "",
+    resources: "",
+  });
 
   const mapShift = (shift: string): "MORNING" | "AFTERNOON" | "EVENING" => {
     switch (shift) {
@@ -41,6 +44,7 @@ export default function BookingForm() {
 
   const fetchAvailableResources = async () => {
     if (!selectedDate) return;
+    setResourcesReady(false)
     const dateStr = selectedDate.format("YYYY-MM-DD");
 
     const shiftStr = mapShift(selectedShift);
@@ -48,7 +52,7 @@ export default function BookingForm() {
     const classArray = selectedClasses.map((item) =>
       parseInt(item.replace(/\D/g, ""))
     );
-    console.log(classArray.join(","));
+    
     try {
       const resources = await resourceService.getAvailable(
         dateStr,
@@ -56,6 +60,7 @@ export default function BookingForm() {
         classArray.join(",")
       );
       setAvailableResources(resources);
+      setResourcesReady(true)
     } catch (error) {
       console.error("Erro ao buscar recursos disponíveis", error);
       setAvailableResources([]);
@@ -88,11 +93,19 @@ export default function BookingForm() {
       };
 
       try {
-        const response = await bookingService.createBooking(bookingData);
+        const booking = await bookingService.createBooking(bookingData);
         console.log(
           `Agendamento para ${resourceName} realizado com sucesso:`,
-          response
+          booking
         );
+        if (booking) {
+          setSelectedDate(dayjs());
+          setSelectedShift("Matutino");
+          setSelectedClasses(classes);
+          setSelectedResources([]);
+          setAvailableResources([]);
+        }
+        
       } catch (error) {
         console.error(`Erro ao agendar ${resourceName}:`, error);
         return; 
@@ -100,14 +113,33 @@ export default function BookingForm() {
     }
   };
 
+  const handleOpenModal = () => {
+    setModalData({
+      date: selectedDate ? selectedDate.format("DD/MM/YYYY") : "",
+      shift: selectedShift,
+      classes: selectedClasses.join(", "),
+      resources: selectedResources.join(", "),
+    });
+    setModalOpen(true);
+  };
+
   return (
     <div className={styles.container}>
+      <BookingModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={() => {
+          handleSubmit()
+          setModalOpen(false);
+        }}
+        data = {modalData} 
+      />
       <form
         className={styles.form}
         action="submit"
         onSubmit={(e) => {
           e.preventDefault();
-          handleSubmit();
+          handleOpenModal();
         }}
       >
         <div className={styles.formInner}>
@@ -162,7 +194,14 @@ export default function BookingForm() {
                     Selecione pelo menos uma aula.
                   </h3>
                 </div>
-              ) : availableResources.length === 0 ? (
+              ) : !resourcesReady ? (
+                <div>
+
+                <h3 className={styles.infoMessage}>
+                    Carregando recursos disponíveis...
+                  </h3>
+                </div>
+              ): availableResources.length === 0 ? (
                 <div>
                   <h3 className={styles.infoMessage}>
                     Não há recursos disponíveis para esta data e horário.

@@ -1,0 +1,85 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2); 
+  backdrop-filter: blur(4px); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; 
+}
+
+.modal {
+  background: #f8c6a4;
+  padding: 24px 36px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 420px;
+  position: relative;
+  z-index: 1001; 
+}
+
+.title {
+    font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.label {
+  display: block;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  font-family: var(--secondary-font);
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.confirm {
+  background: #008000;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 45%;
+  font-weight: 600;
+  font-family: var(--secondary-font);
+}
+
+.cancel {
+  background: #b30000;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 45%;
+  font-weight: 600;
+  font-family: var(--secondary-font);
+}
+
+.confirm:hover {
+  background: #006600;
+}
+
+.cancel:hover {
+  background: #800000;
+}
