@@ -1,44 +1,55 @@
 "use client"
-import React, { useState } from "react";
-import ListDados from "@/components/DataList/DataList";
-import Users from "../../components/DataList/data/users";
-import DeleteModal from "@/components/DeleteModal/DeleteModal";
+import React, { useEffect, useState } from "react";
+import { userService } from "@/service/userService";
+import { IUser } from "@/types/user";
+import CardItem from "@/components/CardItem/Carditem";
+import styles from "./page.module.css";
 
-interface User {
-  id: number;
-  data1: string;
-  data2: string;
-}
+export default function UsersPage() {
+  const [dataList, setDataList] = useState<IUser[]>([]);
 
-export default function ListUser() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  const handleDeleteClick = (user: User) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
+  const fetchUsers = async () => {
+    try {
+      const users = await userService.getActiveUsers(); 
+      setDataList(users); 
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
+  };
+
+  const handleDeleteUser = async (user: IUser) => {
+    try {
+      await userService.deactivateUser(user.id);
+      setDataList((prev) => prev.filter((u) => u.id !== user.id));
+    } catch (error) {
+      console.error("Erro ao desativar usuário:", error);
+    }
   };
 
   return (
-    <>
-      <ListDados
-        title="Lista de Usuários"
-        buttonLabel="Adicionar Usuário"
-        dataList={Users}
-        listType="user"
-        onDeleteUser={handleDeleteClick}
-      />
-      <DeleteModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={() => {
-          setIsModalOpen(false);
-        }}
-        userData={{
-          nome: selectedUser?.data1 || '',
-          email: selectedUser?.data2 || ''
-        }}
-      />
-    </>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1>Lista de Usuários</h1>
+        <button>Adicionar Usuário</button>
+      </div>
+      
+      <div className={styles.cards}>
+        <div className={styles.listcards}>
+          {dataList.map((item) => (
+            <CardItem 
+              key={item.id} 
+              data1={item.full_name} 
+              data2={item.email} 
+              type='user'
+              onDelete={() => handleDeleteUser(item)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
