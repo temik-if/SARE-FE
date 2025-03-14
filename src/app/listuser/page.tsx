@@ -3,10 +3,13 @@ import React, { useEffect, useState } from "react";
 import { userService } from "@/service/userService";
 import { IUser } from "@/types/user";
 import CardItem from "@/components/CardItem/Carditem";
+import DeleteModal from "@/components/DeleteModal/DeleteModal";
 import styles from "./page.module.css";
 
 export default function UsersPage() {
   const [dataList, setDataList] = useState<IUser[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -14,17 +17,30 @@ export default function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const users = await userService.getActiveUsers(); 
-      setDataList(users); 
+      const users = await userService.getActiveUsers();
+      setDataList(users);
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     }
   };
 
-  const handleDeleteUser = async (user: IUser) => {
+  const handleOpenModal = (user: IUser) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedUser) return;
+    
     try {
-      await userService.deactivateUser(user.id);
-      setDataList((prev) => prev.filter((u) => u.id !== user.id));
+      await userService.deactivateUser(selectedUser.id);
+      setDataList((prev) => prev.filter((u) => u.id !== selectedUser.id));
+      handleCloseModal();
     } catch (error) {
       console.error("Erro ao desativar usuário:", error);
     }
@@ -44,12 +60,22 @@ export default function UsersPage() {
               key={item.id} 
               data1={item.full_name} 
               data2={item.email} 
-              type='user'
-              onDelete={() => handleDeleteUser(item)}
+              type="user"
+              onDelete={() => handleOpenModal(item)} // Agora abre o modal
             />
           ))}
         </div>
       </div>
+
+      {/* Modal de Exclusão */}
+      {selectedUser && (
+        <DeleteModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmDelete}
+          userData={{ nome: selectedUser.full_name, email: selectedUser.email }}
+        />
+      )}
     </div>
   );
 }
