@@ -6,9 +6,7 @@ export const resourceService = {
     post<IResource>("/resource", resourceData),
   getAll: () => get<IResource[]>("/resource"),
   getAvailable: (date: string, shift: string, lesson: string) =>
-    get<IResource[]>("/resource/available", {
-      params: { date, shift, lesson },
-    }),
+    get<IResource[]>("/resource/available",{ date, shift, lesson }),
   getAllEquipment: () => get<IResource[]>("/resource/equipment"),
   getAllRooms: () => get<IResource[]>("/resource/room"),
   getById: (id: string) => get<IResource>(`/resource/${id}`),
