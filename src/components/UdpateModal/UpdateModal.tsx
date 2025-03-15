@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import styles from './UpdateModal.module.css';
 import { UserUpdate } from "@/types/user";
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import { MdEdit } from "react-icons/md";
 
 interface EditModalProps {
   isOpen: boolean;
@@ -27,8 +27,8 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
 
   useEffect(() => {
     if (userData) {
-      setFirstName(userData.firstName || '');  // Certifique-se de que a variável esteja correta
-      setLastName(userData.lastName || '');    // Certifique-se de que a variável esteja correta
+      setFirstName(userData.firstName || '');  
+      setLastName(userData.lastName || ''); 
       setEmail(userData.email || '');
       setType(userData.type || '');
     }
@@ -49,8 +49,6 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
 
   const handleSave = () => {
     if (!validateForm()) return;
-
-    // Passe os valores com o nome correto da propriedade (first_Name, last_Name, etc.)
     onConfirm({ firstName: firstName, lastName: lastName, email, type: type as "TEACHER" | "COORDINATOR" });
     setSuccessMessage("Dados atualizados com sucesso!");
     setTimeout(() => {
@@ -64,22 +62,33 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h2>Editar Usuário</h2>
+        <h2>Edição</h2>
         
         {errorMessage && <p className={styles.error}>{errorMessage}</p>}
         {successMessage && <p className={styles.success}>{successMessage}</p>}
 
         <div className={styles.field}>
           <label>Nome</label>
-          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <div className={styles.editableField}>
+          <input type="text" value={firstName} className={styles.input} onChange={(e) => setFirstName(e.target.value)} />
+          <MdEdit />
+          </div>
         </div>
+        
         <div className={styles.field}>
           <label>Sobrenome</label>
-          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <div className={styles.editableField}>
+            <input type="text" value={lastName} className={styles.input} onChange={(e) => setLastName(e.target.value)} />
+            <MdEdit />
+          </div>
         </div>
+
         <div className={styles.field}>
           <label>Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <div className={styles.editableField}>
+            <input type="email" value={email} className={styles.input} onChange={(e) => setEmail(e.target.value)} />
+            <MdEdit />
+          </div>
         </div>
         <div className={styles.field}>
           <label>Tipo de Usuário</label>
@@ -107,7 +116,7 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
         </div>
         
         <div className={styles.buttons}>
-          <button onClick={handleSave} className={styles.saveButton}>Salvar</button>
+          <button onClick={handleSave} className={styles.saveButton}>Editar</button>
         </div>
       </div>
     </div>

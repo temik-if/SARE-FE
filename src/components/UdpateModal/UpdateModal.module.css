@@ -34,21 +34,30 @@
 
 .field label {
   display: block;
-  font-family: "Karla", serif;
-  font-weight: 400;
-  font-size: 26px;
+  font-family: "Inria Sans", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
   color: black;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.3rem;
 }
 
-.field input {
+.field .editableField{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: rgba(255, 255, 255, 0.8);
   width: 100%;
   padding: 1rem;
   border-radius: 5px;
   border: none;
+}
+
+.input {
+  width: 100%;
+  border: none;
   font-family: "Karla", serif;
   font-size: 20px;
+  background-color: transparent;
 }
 
 .buttons {
@@ -58,7 +67,7 @@
   margin-top: 4rem;
 }
 
-.returnButton, .deleteButton {
+.returnButton, .deleteButton , .saveButton{
   width: 200px;
   height: 55px;
   border-radius: 5px;
@@ -76,4 +85,13 @@
 
 .deleteButton {
   background-color: #960606;
+}
+
+.saveButton {
+  background-color: var(--primary);
+}
+.input:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
 }
