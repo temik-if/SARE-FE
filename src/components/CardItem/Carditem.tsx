@@ -21,14 +21,14 @@ export default function CardItem({ data1, data2, type, onDelete, onEdit }: CardI
       <span>{data2}</span>
       <div>
         <MdModeEdit 
-        color="#fff" 
-        size={24}
-        onClick={onEdit}
-        style={{ cursor: 'pointer' }}
-        />
-        <RiDeleteBinLine 
           color="#fff" 
-          size={24} 
+          size={24}
+          onClick={onEdit}
+          style={{ cursor: 'pointer' }}
+        />
+        <RiDeleteBinLine
+          color="#fff"
+          size={24}
           onClick={onDelete}
           style={{ cursor: 'pointer' }}
         />
