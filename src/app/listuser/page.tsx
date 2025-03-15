@@ -7,8 +7,6 @@ import EditModal from "@/components/UdpateModal/UpdateModal";
 import DeleteModal from "@/components/DeleteModal/DeleteModal";
 import styles from "./page.module.css";
 import { getSession } from "next-auth/react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function UsersPage() {
   const [dataList, setDataList] = useState<IUser[]>([]);
@@ -16,6 +14,8 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     fetchUsers();
@@ -96,15 +96,8 @@ export default function UsersPage() {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.message === "Email already in use") {
-          toast.warning("Este email já está sendo utilizado.", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          setErrorMessage("Este email já está sendo utilizado.");
+          setShowErrorPopup(true);
         } else {
           throw new Error(`Erro ao atualizar usuário: ${response.statusText}`);
         }
@@ -117,15 +110,16 @@ export default function UsersPage() {
         )
       );
       setIsEditModalOpen(false);
-      setShowSuccessPopup(true); // Exibe o modal de sucesso
+      setShowSuccessPopup(true);
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
+      setErrorMessage("Ocorreu um erro ao atualizar o usuário.");
+      setShowErrorPopup(true);
     }
   };
 
   return (
     <div className={styles.container}>
-      <ToastContainer />
       <div className={styles.header}>
         <h1>Lista de Usuários</h1>
         <button>Adicionar Usuário</button>
@@ -178,6 +172,20 @@ export default function UsersPage() {
                 setShowSuccessPopup(false);
                 window.location.reload();
               }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showErrorPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <p>{errorMessage}</p>
+            <button
+              className={styles.popupButton}
+              onClick={() => setShowErrorPopup(false)}
             >
               OK
             </button>
