@@ -1,0 +1,79 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
+.modal {
+  background-color: #FAC9AE;
+  padding: 3.5rem;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.modal h2 {
+  font-family: "Karla", serif;
+  font-weight: 700;
+  font-size: 35px;
+  color: black;
+  margin-bottom:3.5rem;
+  text-align: center;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  font-family: "Karla", serif;
+  font-weight: 400;
+  font-size: 26px;
+  color: black;
+  margin-bottom: 0.8rem;
+}
+
+.field input {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  padding: 1rem;
+  border-radius: 5px;
+  border: none;
+  font-family: "Karla", serif;
+  font-size: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  margin-top: 4rem;
+}
+
+.returnButton, .deleteButton {
+  width: 200px;
+  height: 55px;
+  border-radius: 5px;
+  font-family: "Karla", serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.returnButton {
+  background-color: #187007;
+}
+
+.deleteButton {
+  background-color: #960606;
+}
