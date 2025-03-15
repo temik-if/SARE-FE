@@ -7,9 +7,10 @@ interface CardItemProps {
   data2: string;
   type: string;
   onDelete?: () => void;
+  onEdit?: () => void;
 }
 
-export default function CardItem({ data1, data2, type, onDelete }: CardItemProps) {
+export default function CardItem({ data1, data2, type, onDelete, onEdit }: CardItemProps) {
   return (
     <div className={styles.cardItem}>
       {type === "user" ? (
@@ -19,7 +20,12 @@ export default function CardItem({ data1, data2, type, onDelete }: CardItemProps
       )}
       <span>{data2}</span>
       <div>
-        <MdModeEdit color="#fff" size={24} />
+        <MdModeEdit 
+        color="#fff" 
+        size={24}
+        onClick={onEdit}
+        style={{ cursor: 'pointer' }}
+        />
         <RiDeleteBinLine 
           color="#fff" 
           size={24} 
