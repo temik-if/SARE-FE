@@ -1,15 +1,19 @@
 "use client"
 import React, { useEffect, useState } from "react";
+import { IUser, UserUpdate } from "@/types/user";
 import { userService } from "@/service/userService";
-import { IUser } from "@/types/user";
 import CardItem from "@/components/CardItem/Carditem";
+import EditModal from "@/components/UdpateModal/UpdateModal";
 import DeleteModal from "@/components/DeleteModal/DeleteModal";
 import styles from "./page.module.css";
+import { getSession } from "next-auth/react";
 
 export default function UsersPage() {
   const [dataList, setDataList] = useState<IUser[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchUsers();
@@ -24,7 +28,7 @@ export default function UsersPage() {
     }
   };
 
-  const handleOpenModal = (user: IUser) => {
+  const handleOpenDeleteModal = (user: IUser) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
@@ -36,7 +40,7 @@ export default function UsersPage() {
 
   const handleConfirmDelete = async () => {
     if (!selectedUser) return;
-    
+
     try {
       await userService.deactivateUser(selectedUser.id);
       setDataList((prev) => prev.filter((u) => u.id !== selectedUser.id));
@@ -46,29 +50,104 @@ export default function UsersPage() {
     }
   };
 
+  const handleEditUser = (user: IUser) => {
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateUser = async (updatedData: UserUpdate) => {
+    if (!selectedUser) return;
+
+    // Prepare the valid data to be sent to the server
+    const validData: UserUpdate = {};
+    if (updatedData.firstName) validData.firstName = updatedData.firstName;
+    if (updatedData.lastName) validData.lastName = updatedData.lastName;
+    if (updatedData.email) validData.email = updatedData.email;
+    if (updatedData.type) validData.type = updatedData.type;
+
+    alert(` ${selectedUser.id}, ${validData.email}, ${validData.firstName}, ${validData.lastName}, ${validData.type}`);
+
+    try {
+      const session = await getSession();
+      const accessToken = session?.accessToken;
+
+      if (!accessToken) {
+        console.error("Token de autenticação não encontrado.");
+        return;
+      }
+
+      const response = await fetch(`https://sare-be.onrender.com/user/${selectedUser.id}`, {
+        method: "PUT",
+        headers: {
+          "Accept": "*/*",
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: validData.firstName,
+          last_name: validData.lastName,
+          email: validData.email,
+          type: validData.type,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ao atualizar usuário: ${response.statusText}`);
+      }
+
+      setDataList((prev) =>
+        prev.map((u) =>
+          u.id === selectedUser.id ? { ...u, ...validData } : u
+        )
+      );
+      setIsEditModalOpen(false);
+      setSuccessMessage("Usuário atualizado com sucesso!");
+
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Lista de Usuários</h1>
         <button>Adicionar Usuário</button>
       </div>
-      
+
+      {successMessage && <p className={styles.success}>{successMessage}</p>}
+
       <div className={styles.cards}>
         <div className={styles.listcards}>
           {dataList.map((item) => (
-            <CardItem 
-              key={item.id} 
-              data1={item.full_name} 
-              data2={item.email} 
+            <CardItem
+              key={item.id}
+              data1={item.full_name}
+              data2={item.email}
               type="user"
-              onDelete={() => handleOpenModal(item)} // Agora abre o modal
+              onDelete={() => handleOpenDeleteModal(item)}
+              onEdit={() => handleEditUser(item)}
             />
           ))}
         </div>
       </div>
 
-      {/* Modal de Exclusão */}
-      {selectedUser && (
+      {isEditModalOpen && selectedUser && (
+        <EditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onConfirm={handleUpdateUser}
+          userData={{
+            firstName: selectedUser.first_name,
+            lastName: selectedUser.last_name,
+            email: selectedUser.email,
+            type: selectedUser.type as "TEACHER" | "COORDINATOR",
+          }}
+        />
+      )}
+
+      {selectedUser && isModalOpen && (
         <DeleteModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
