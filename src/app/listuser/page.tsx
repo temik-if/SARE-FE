@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import { IUser, UserUpdate } from "@/types/user";
 import { userService } from "@/service/userService";
@@ -7,13 +7,15 @@ import EditModal from "@/components/UdpateModal/UpdateModal";
 import DeleteModal from "@/components/DeleteModal/DeleteModal";
 import styles from "./page.module.css";
 import { getSession } from "next-auth/react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function UsersPage() {
   const [dataList, setDataList] = useState<IUser[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -57,25 +59,25 @@ export default function UsersPage() {
 
   const handleUpdateUser = async (updatedData: UserUpdate) => {
     if (!selectedUser) return;
-
-    // Prepare the valid data to be sent to the server
+  
     const validData: UserUpdate = {};
     if (updatedData.firstName) validData.firstName = updatedData.firstName;
     if (updatedData.lastName) validData.lastName = updatedData.lastName;
-    if (updatedData.email) validData.email = updatedData.email;
     if (updatedData.type) validData.type = updatedData.type;
-
-    alert(` ${selectedUser.id}, ${validData.email}, ${validData.firstName}, ${validData.lastName}, ${validData.type}`);
-
+  
+    if (updatedData.email && updatedData.email !== selectedUser.email) {
+      validData.email = updatedData.email;
+    }
+  
     try {
       const session = await getSession();
       const accessToken = session?.accessToken;
-
+  
       if (!accessToken) {
         console.error("Token de autenticação não encontrado.");
         return;
       }
-
+  
       const response = await fetch(`https://sare-be.onrender.com/user/${selectedUser.id}`, {
         method: "PUT",
         headers: {
@@ -90,20 +92,32 @@ export default function UsersPage() {
           type: validData.type,
         }),
       });
-
+  
       if (!response.ok) {
-        throw new Error(`Erro ao atualizar usuário: ${response.statusText}`);
+        const errorData = await response.json();
+        if (errorData.message === "Email already in use") {
+          toast.warning("Este email já está sendo utilizado.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        } else {
+          throw new Error(`Erro ao atualizar usuário: ${response.statusText}`);
+        }
+        return;
       }
-
+  
       setDataList((prev) =>
         prev.map((u) =>
           u.id === selectedUser.id ? { ...u, ...validData } : u
         )
       );
       setIsEditModalOpen(false);
-      setSuccessMessage("Usuário atualizado com sucesso!");
-
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setShowSuccessPopup(true); // Exibe o modal de sucesso
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
     }
@@ -111,13 +125,11 @@ export default function UsersPage() {
 
   return (
     <div className={styles.container}>
+      <ToastContainer />
       <div className={styles.header}>
         <h1>Lista de Usuários</h1>
         <button>Adicionar Usuário</button>
       </div>
-
-      {successMessage && <p className={styles.success}>{successMessage}</p>}
-
       <div className={styles.cards}>
         <div className={styles.listcards}>
           {dataList.map((item) => (
@@ -154,6 +166,23 @@ export default function UsersPage() {
           onConfirm={handleConfirmDelete}
           userData={{ nome: selectedUser.full_name, email: selectedUser.email }}
         />
+      )}
+
+      {showSuccessPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <p>O usuário foi atualizado com sucesso.</p>
+            <button
+              className={styles.popupButton}
+              onClick={() => {
+                setShowSuccessPopup(false);
+                window.location.reload();
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
