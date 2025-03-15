@@ -24,11 +24,12 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
   const [type, setType] = useState<'TEACHER' | 'COORDINATOR' | ''>('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // Estado para armazenar erros
 
   useEffect(() => {
     if (userData) {
-      setFirstName(userData.firstName || '');  
-      setLastName(userData.lastName || ''); 
+      setFirstName(userData.firstName || '');
+      setLastName(userData.lastName || '');
       setEmail(userData.email || '');
       setType(userData.type || '');
     }
@@ -39,17 +40,40 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
   };
 
   const validateForm = () => {
-    if (!firstName || !lastName || !email || !type) {
-      setErrorMessage("Por favor, preencha todos os campos obrigatórios antes de enviar.");
-      return false;
+    const newErrors: { [key: string]: string } = {};
+
+    // Validação do nome
+    if (!firstName) {
+      newErrors.firstName = "O nome é obrigatório.";
     }
-    setErrorMessage('');
-    return true;
+
+    // Validação do sobrenome
+    if (!lastName) {
+      newErrors.lastName = "O sobrenome é obrigatório.";
+    }
+
+    // Validação do email
+    if (!email) {
+      newErrors.email = "O email é obrigatório.";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "O email é inválido.";
+    }
+
+    // Validação do tipo de usuário
+    if (!type) {
+      newErrors.type = "O tipo de usuário é obrigatório.";
+    }
+
+    setErrors(newErrors); // Atualiza o estado de erros
+
+    // Retorna true se não houver erros
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = () => {
-    if (!validateForm()) return;
-    onConfirm({ firstName: firstName, lastName: lastName, email, type: type as "TEACHER" | "COORDINATOR" });
+    if (!validateForm()) return; // Se houver erros, não prossegue
+
+    onConfirm({ firstName, lastName, email, type: type as "TEACHER" | "COORDINATOR" });
     setSuccessMessage("Dados atualizados com sucesso!");
     setTimeout(() => {
       setSuccessMessage('');
@@ -63,33 +87,48 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <h2>Edição</h2>
-        
-        {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-        {successMessage && <p className={styles.success}>{successMessage}</p>}
-
         <div className={styles.field}>
           <label>Nome</label>
           <div className={styles.editableField}>
-          <input type="text" value={firstName} className={styles.input} onChange={(e) => setFirstName(e.target.value)} />
-          <MdEdit />
+            <input
+              type="text"
+              value={firstName}
+              className={`${styles.input} ${errors.firstName ? styles.error : ''}`}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <MdEdit />
           </div>
+          {errors.firstName && <span className={styles.errorMessage}>{errors.firstName}</span>}
         </div>
-        
+
         <div className={styles.field}>
           <label>Sobrenome</label>
           <div className={styles.editableField}>
-            <input type="text" value={lastName} className={styles.input} onChange={(e) => setLastName(e.target.value)} />
+            <input
+              type="text"
+              value={lastName}
+              className={`${styles.input} ${errors.lastName ? styles.error : ''}`}
+              onChange={(e) => setLastName(e.target.value)}
+            />
             <MdEdit />
           </div>
+          {errors.lastName && <span className={styles.errorMessage}>{errors.lastName}</span>}
         </div>
 
         <div className={styles.field}>
           <label>Email</label>
           <div className={styles.editableField}>
-            <input type="email" value={email} className={styles.input} onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="email"
+              value={email}
+              className={`${styles.input} ${errors.email ? styles.error : ''}`}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <MdEdit />
           </div>
+          {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
         </div>
+
         <div className={styles.field}>
           <label>Tipo de Usuário</label>
           <Box sx={{ minWidth: 120 }}>
@@ -113,8 +152,9 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
               </Select>
             </FormControl>
           </Box>
+          {errors.type && <span className={styles.errorMessage}>{errors.type}</span>}
         </div>
-        
+
         <div className={styles.buttons}>
           <button onClick={handleSave} className={styles.saveButton}>Editar</button>
         </div>
