@@ -15,7 +15,7 @@
     font-optical-sizing: auto;
     font-weight: 700;
     font-style: normal;
-    font-size: 35px;
+    font-size: calc(413px /17);
     color: white;
 }
 
@@ -26,4 +26,15 @@
     font-style: normal;
     font-size: 26px;
     color: white;
+}
+
+.classSelectContainer {
+    padding-top: 12px;
+}
+
+.selectedItem {
+  background-color: var(--primary) !important; 
+  color: white !important;
+  font-weight: 600 !important;
+  transition: background-color 0.3s ease, color 0.3s ease; 
 }

@@ -7,7 +7,7 @@ interface CardItemProps {
   data2: string;
   type: string;
   onDelete?: () => void;
-  onEdit?: () => void;  
+  onEdit?: () => void;
 }
 
 export default function CardItem({ data1, data2, type, onDelete, onEdit }: CardItemProps) {
@@ -22,7 +22,7 @@ export default function CardItem({ data1, data2, type, onDelete, onEdit }: CardI
       <div>
         <MdModeEdit 
           color="#fff" 
-          size={24} 
+          size={24}
           onClick={onEdit}
           style={{ cursor: 'pointer' }}
         />
