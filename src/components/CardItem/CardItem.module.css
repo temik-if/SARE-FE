@@ -15,7 +15,7 @@
     font-optical-sizing: auto;
     font-weight: 700;
     font-style: normal;
-    font-size: 35px;
+    font-size: calc(413px /17);
     color: white;
 }
 
