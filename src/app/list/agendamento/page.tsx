@@ -14,7 +14,9 @@ export default function AgendamentosPage() {
   const [selectedAgendamento, setSelectedAgendamento] = useState<IResource | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     fetchAgendamentos();
@@ -23,7 +25,6 @@ export default function AgendamentosPage() {
   const fetchAgendamentos = async () => {
     try {
       const data = await resourceService.getAll();
-      // const availableAgendamentos = data.filter((item: IResource) => item.status === "AVAILABLE");
       setAgendamentos(data);
     } catch (error) {
       console.error("Erro ao buscar agendamentos disponíveis:", error);
@@ -62,6 +63,23 @@ export default function AgendamentosPage() {
   const handleUpdateAgendamento = async (updatedData: Partial<IResource>) => {
     if (!selectedAgendamento) return;
 
+    // Verifica se houve alterações nos campos
+    const hasChanges =
+      updatedData.name !== selectedAgendamento.name ||
+      updatedData.status !== selectedAgendamento.status ||
+      (updatedData.equipment &&
+        (updatedData.equipment.serial_number !== selectedAgendamento.equipment?.serial_number ||
+          updatedData.equipment.model !== selectedAgendamento.equipment?.model ||
+          updatedData.equipment.brand !== selectedAgendamento.equipment?.brand)) ||
+      (updatedData.room &&
+        updatedData.room.capacity !== selectedAgendamento.room?.capacity);
+
+    if (!hasChanges) {
+      setErrorMessage("Nenhuma alteração foi feita.");
+      setShowErrorPopup(true);
+      return; // Não faz a requisição se não houver alterações
+    }
+
     try {
       await resourceService.updateResource(String(selectedAgendamento.id), updatedData);
       setAgendamentos((prev) =>
@@ -70,8 +88,17 @@ export default function AgendamentosPage() {
         )
       );
       setIsEditModalOpen(false);
-    } catch (error) {
+      setSuccessMessage(`O ${selectedAgendamento.equipment ? "equipamento" : "sala"} foi atualizado com sucesso.`);
+      setShowSuccessPopup(true);
+    } catch (error: any) {
       console.error("Erro ao atualizar agendamento:", error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage("O nome do campo já existe e não pode ser alterado.");
+        setShowErrorPopup(true);
+      } else {
+        setErrorMessage("Ocorreu um erro ao atualizar o recurso. Tente novamente.");
+        setShowErrorPopup(true);
+      }
     }
   };
 
@@ -120,6 +147,20 @@ export default function AgendamentosPage() {
             <button
               className={styles.popupButton}
               onClick={() => setShowSuccessPopup(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showErrorPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <p>{errorMessage}</p>
+            <button
+              className={styles.popupButton}
+              onClick={() => setShowErrorPopup(false)}
             >
               OK
             </button>

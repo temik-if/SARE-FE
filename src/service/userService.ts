@@ -4,7 +4,7 @@ import { get, patch, post, put } from "./api";
 export const userService = {
   createUser: (userData: IUserCreate) => post<IUser>("/user", userData),
   getAll: () => get<IUser[]>("/user"),
-  getActiveUsers: () => get<IUser[]>("/user/active"),
+  getActiveUsers: () => get<IUser[]>("/user/status/true"),
   getInactiveUsers: () => get<IUser[]>("/user/inactive"),
   getById: (id: string) => get<IUser>(`/user/${id}`),
   updateUser: (id: string, userData: IUserCreate) =>

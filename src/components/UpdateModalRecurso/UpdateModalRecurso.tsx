@@ -36,13 +36,36 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, resource, onUpda
     let newErrors = { name: "", status: "", serialNumber: "", model: "", brand: "", capacity: "" };
     if (!name.trim()) newErrors.name = "O nome não pode estar vazio.";
     if (!status.trim()) newErrors.status = "O status não pode estar vazio.";
+    if (resource?.equipment && !serialNumber.trim()) newErrors.serialNumber = "O número de série não pode estar vazio.";
+    if (resource?.equipment && !model.trim()) newErrors.model = "O modelo não pode estar vazio.";
+    if (resource?.equipment && !brand.trim()) newErrors.brand = "A marca não pode estar vazia.";
+    if (resource?.room && !capacity.trim()) newErrors.capacity = "A capacidade não pode estar vazia.";
     setErrors(newErrors);
     return !Object.values(newErrors).some(error => error);
   };
 
   const handleUpdate = () => {
     if (validateFields() && resource) {
-      onUpdate({ name, status });
+      const updatedData: Partial<IResource> = {
+        name,
+        status,
+      };
+
+      if (resource.equipment) {
+        updatedData.equipment = {
+          serial_number: serialNumber,
+          model,
+          brand,
+        };
+      }
+
+      if (resource.room) {
+        updatedData.room = {
+          capacity: parseInt(capacity, 10),
+        };
+      }
+
+      onUpdate(updatedData);
     }
   };
 
