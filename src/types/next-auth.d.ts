@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 
 declare module "next-auth" {
   interface User {
+    profilePicture?: string;
     accessToken: string;
     isActive: boolean;
     type: string;
@@ -13,6 +14,7 @@ declare module "next-auth" {
     user: {
       id: string;
       name: string;
+      profilePicture?: string;
       email: string;
       isActive: boolean;
       type: string;

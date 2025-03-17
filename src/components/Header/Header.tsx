@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import styles from "./Header.module.css";
 import Image from "next/image";
@@ -7,6 +7,8 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Session } from "next-auth";
+import ProfileMenu from "../ProfileMenu/ProfileMenu";
+
 
 type HeaderProps = {
   session: Session | null;
@@ -18,10 +20,15 @@ export default function Header({ session }: HeaderProps) {
   const handleClick = () => {
     if (session) {
       signOut();
-    } else { 
+    } else {
       router.push("/login");
     }
   };
+
+  const handleLogout = () => {
+    signOut();
+  }
+
 
   return (
     <>
@@ -30,10 +37,14 @@ export default function Header({ session }: HeaderProps) {
           <Link href="/">
             <Image src="/images/logo.png" alt="Logo" width={170} height={60} />
           </Link>
-          <ButtonSecondary
-            label={session ? "SAIR" : "LOGIN"}
-            onClick={handleClick}
-          />
+          {session?.user ? (
+            <ProfileMenu session={session} onLogout={handleLogout} />
+          ) : (
+            <ButtonSecondary
+              label={session ? "SAIR" : "LOGIN"}
+              onClick={handleClick}
+            />
+          )}
         </div>
       </header>
     </>

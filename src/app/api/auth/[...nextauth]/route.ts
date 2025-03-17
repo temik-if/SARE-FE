@@ -94,6 +94,7 @@ const authOptions: NextAuthOptions = {
           user.accessToken = data.access_token;
           user.id = data.user.id;
           user.name = data.user.full_name;
+          user.profilePicture = user.image!!;
           user.email = data.user.email;
           user.isActive = data.user.is_active;
           user.type = data.user.type;
@@ -135,6 +136,7 @@ const authOptions: NextAuthOptions = {
         token.type = user.type;
         token.createdAt = user.createdAt;
         token.accessToken = user.accessToken;
+        token.picture = user.profilePicture;
       }
 
       return token;
@@ -147,6 +149,7 @@ const authOptions: NextAuthOptions = {
         session.user.email = token.email as string;
         session.user.type = token.type as string;
         session.user.createdAt = token.createdAt as string;
+        session.user.profilePicture = token.picture as string;
         session.accessToken = token.accessToken as string;
         session.idToken = token.idToken as string;
       }
