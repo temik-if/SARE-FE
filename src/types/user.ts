@@ -19,8 +19,8 @@ export interface IUserCreate {
 }
 
 export interface UserUpdate {
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;
   password?: string;
   type?: "TEACHER" | "COORDINATOR";
