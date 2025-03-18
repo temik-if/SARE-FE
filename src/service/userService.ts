@@ -1,13 +1,13 @@
-import { IUser, IUserCreate } from "@/types/user";
+import { IUser, IUserCreate, UserUpdate } from "@/types/user";
 import { get, patch, post, put } from "./api";
 
 export const userService = {
   createUser: (userData: IUserCreate) => post<IUser>("/user", userData),
   getAll: () => get<IUser[]>("/user"),
-  getActiveUsers: () => get<IUser[]>("/user/status/true"),
+  getActiveUsers: (is_active: boolean) => get<IUser[]>(`/user/status/${is_active}`),
   getInactiveUsers: () => get<IUser[]>("/user/inactive"),
   getById: (id: string) => get<IUser>(`/user/${id}`),
-  updateUser: (id: string, userData: IUserCreate) =>
+  updateUser: (id: string, userData: UserUpdate) =>
     put("/user/" + id, userData),
   getByEmail: (email: string) => get<IUser>(`/user/email/${email}`),
   searchByName: (name: string) => get<IUser[]>(`/user/search/${name}`),
