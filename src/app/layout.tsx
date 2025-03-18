@@ -10,12 +10,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(GET) as Session | null;
-
   return (
     <html lang="pt-br">
       <body>
         <Providers session={session}>
-          <Header session={session} />
+          <Header />
           {children}
         </Providers>
       </body>

@@ -1,22 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Header.module.css";
 import Image from "next/image";
 import ButtonSecondary from "../ButtonSecondary/ButtonSecondary";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Session } from "next-auth";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
+import NavMenu from "@/components/NavMenu/NavMenu";
+import SearchBar from "../SearchBar/SearchBar";
+import useWindowSize from "@/hooks/useWindowSize";
+import MobileDrawerMenu from "../MobileDrawerMenu/MobileDrawerMenu";
 
-
-type HeaderProps = {
-  session: Session | null;
-};
-
-export default function Header({ session }: HeaderProps) {
+export default function Header() {
   const router = useRouter();
+  const { data: session, status, update } = useSession();
+  const isSmallScreen = useWindowSize();
 
+  useEffect(() => {
+    if (session) {
+      if (session?.user.type == undefined) {
+        update();
+      }
+    }
+  });
   const handleClick = () => {
     if (session) {
       signOut();
@@ -27,8 +34,9 @@ export default function Header({ session }: HeaderProps) {
 
   const handleLogout = () => {
     signOut();
-  }
+  };
 
+  if (status === "loading") return null;
 
   return (
     <>
@@ -37,13 +45,25 @@ export default function Header({ session }: HeaderProps) {
           <Link href="/">
             <Image src="/images/logo.png" alt="Logo" width={170} height={60} />
           </Link>
-          {session?.user ? (
-            <ProfileMenu session={session} onLogout={handleLogout} />
-          ) : (
+          {status === 'unauthenticated' ? (
             <ButtonSecondary
-              label={session ? "SAIR" : "LOGIN"}
-              onClick={handleClick}
-            />
+                  label="LOGIN"
+                  onClick={handleClick}
+                />
+          ) : session && isSmallScreen ? (
+            <MobileDrawerMenu userType={session?.user.type}/>
+          ) : (
+            <>
+              {session?.user ? (
+                session?.user.type === "COORDINATOR" && (
+                  <>
+                    <SearchBar />
+                    <NavMenu userType={session?.user.type!!} />
+                    <ProfileMenu session={session} onLogout={handleLogout} />
+                  </>
+                )
+              ) : null } 
+            </>
           )}
         </div>
       </header>

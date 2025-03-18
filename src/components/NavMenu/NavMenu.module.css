@@ -1,0 +1,9 @@
+.navMenu {
+  display: flex;
+  gap: 20px;
+}
+
+.menuItem {
+  position: relative; 
+  display: inline-block;
+}

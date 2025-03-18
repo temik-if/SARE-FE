@@ -1,6 +1,8 @@
 import { useState, MouseEvent } from "react";
-import { Avatar, Menu, MenuItem } from "@mui/material";
+import { BiUser, BiLogOut } from "react-icons/bi";
+import { Avatar } from "@mui/material";
 import styles from "./ProfileMenu.module.css";
+import DropdownMenu from "../DropdownMenu/DropdownMenu";
 import { Session } from "next-auth";
 
 type ProfileMenuProps = {
@@ -9,30 +11,28 @@ type ProfileMenuProps = {
 };
 
 export default function ProfileMenu({ onLogout, session }: ProfileMenuProps) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget);
+    setIsOpen((prev) => !prev);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const menuItems = new Map([
+    ["Meus dados", { icon: <BiUser size={18} />, url: "/profile" }],
+    ["Sair", { icon: <BiLogOut size={18} />, action: onLogout }],
+  ]);
 
   return (
-    <>
-      <Avatar
-        className={styles.avatar}
-        alt={session?.user?.name}
-        src={session?.user?.profilePicture}
-        onClick={handleClick}
-      />
-
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem onClick={handleClose}>Meus dados</MenuItem>
-        <MenuItem onClick={onLogout}>Sair</MenuItem>
-      </Menu>
-    </>
+    <div className={styles.profileMenu}>
+      <div className={styles.avatarContainer}>
+        <Avatar
+          className={styles.avatar}
+          alt={session?.user?.name || "User"}
+          src={session?.user?.profilePicture || ""}
+          onClick={handleClick}
+        />
+      {isOpen && <DropdownMenu items={menuItems} setIsOpen={setIsOpen} />}
+      </div>
+    </div>
   );
 }
