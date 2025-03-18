@@ -12,8 +12,8 @@ export interface IUser {
 }
 
 export interface IUserCreate {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   type: "TEACHER" | "COORDINATOR";
