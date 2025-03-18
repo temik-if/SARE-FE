@@ -18,8 +18,8 @@ interface EditModalProps {
 }
 
 export default function EditModal({ isOpen, onClose, onConfirm, userData }: EditModalProps) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [first_name, setFirst_name] = useState('');
+  const [last_name, setLast_name] = useState('');
   const [email, setEmail] = useState('');
   const [type, setType] = useState<'TEACHER' | 'COORDINATOR' | ''>('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -28,8 +28,8 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
 
   useEffect(() => {
     if (userData) {
-      setFirstName(userData.firstName || '');
-      setLastName(userData.lastName || '');
+      setFirst_name(userData.first_name || '');
+      setLast_name(userData.last_name || '');
       setEmail(userData.email || '');
       setType(userData.type || '');
     }
@@ -43,12 +43,12 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
     const newErrors: { [key: string]: string } = {};
 
     // Validação do nome
-    if (!firstName) {
-      newErrors.firstName = "O nome é obrigatório.";
+    if (!first_name) {
+      newErrors.first_name = "O nome é obrigatório.";
     }
 
     // Validação do sobrenome
-    if (!lastName) {
+    if (!last_name) {
       newErrors.lastName = "O sobrenome é obrigatório.";
     }
 
@@ -73,7 +73,7 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
   const handleSave = () => {
     if (!validateForm()) return; // Se houver erros, não prossegue
 
-    onConfirm({ firstName, lastName, email, type: type as "TEACHER" | "COORDINATOR" });
+    onConfirm({ first_name, last_name, email, type: type as "TEACHER" | "COORDINATOR" });
     setSuccessMessage("Dados atualizados com sucesso!");
     setTimeout(() => {
       setSuccessMessage('');
@@ -92,13 +92,13 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
           <div className={styles.editableField}>
             <input
               type="text"
-              value={firstName}
-              className={`${styles.input} ${errors.firstName ? styles.error : ''}`}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={first_name}
+              className={`${styles.input} ${errors.first_name ? styles.error : ''}`}
+              onChange={(e) => setFirst_name(e.target.value)}
             />
             <MdEdit />
           </div>
-          {errors.firstName && <span className={styles.errorMessage}>{errors.firstName}</span>}
+          {errors.first_name && <span className={styles.errorMessage}>{errors.first_name}</span>}
         </div>
 
         <div className={styles.field}>
@@ -106,9 +106,9 @@ export default function EditModal({ isOpen, onClose, onConfirm, userData }: Edit
           <div className={styles.editableField}>
             <input
               type="text"
-              value={lastName}
-              className={`${styles.input} ${errors.lastName ? styles.error : ''}`}
-              onChange={(e) => setLastName(e.target.value)}
+              value={last_name}
+              className={`${styles.input} ${errors.last_name ? styles.error : ''}`}
+              onChange={(e) => setLast_name(e.target.value)}
             />
             <MdEdit />
           </div>
