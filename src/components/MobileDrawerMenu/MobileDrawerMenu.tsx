@@ -19,13 +19,11 @@ import { useRouter } from "next/navigation";
 const userMenu = [
   { label: "Cadastro", url: "/cadastro/user", icon: <FaUserPlus /> },
   { label: "Lista", url: "/listuser", icon: <RiFileList2Line /> },
-  { label: "Edição", url: "/resources", icon: <MdEdit /> },
 ];
 
 const resourcesMenu = [
   { label: "Cadastro", url: "/cadastro/resources", icon: <IoMdAdd /> },
   { label: "Lista", url: "/listresources", icon: <RiFileList2Line /> },
-  { label: "Edição", url: "/resources", icon: <MdEdit /> },
 ];
 
 type MobileDrawerMenuProps = {
@@ -71,74 +69,86 @@ export default function MobileDrawerMenu({ userType }: MobileDrawerMenuProps) {
             </button>
           </div>
 
-          {userType === 'COORDINATOR' && (<>
-            <div className={styles.searchBar}>
-              <input
-                type="text"
-                placeholder="Buscar agendamento..."
-                className={styles.input}
-              />
-              <BiSearch size={18} className={styles.icon} />
-            </div>
+          {userType === "COORDINATOR" && (
+            <>
+              <div className={styles.searchBar}>
+                <input
+                  type="text"
+                  placeholder="Buscar agendamento..."
+                  className={styles.input}
+                />
+                <BiSearch size={18} className={styles.icon} />
+              </div>
 
-            <div className={styles.menuSection}>
-              <button
-                className={styles.accordion}
-                onClick={() => toggleExpand("user")}
-              >
-                Usuários <BiChevronDown />
-              </button>
-              <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: expanded === "user" ? "auto" : 0 }}
-                transition={{ duration: 0.3 }}
-                style={{ overflow: "hidden" }}
-              >
-                <div className={styles.menuItems}>
-                  {userMenu.map((item) => (
-                    <Link
-                      onClick={() => setIsOpen(false)}
-                      key={item.label}
-                      href={item.url}
-                      className={styles.menuItem}
-                    >
-                      {item.icon}
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
+              <div className={styles.menuSection}>
+                <button
+                  className={styles.accordion}
+                  onClick={() => toggleExpand("user")}
+                >
+                  Usuários <BiChevronDown />
+                </button>
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: expanded === "user" ? "auto" : 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ overflow: "hidden" }}
+                >
+                  <div className={styles.menuItems}>
+                    {userMenu.map((item) => (
+                      <Link
+                        onClick={() => setIsOpen(false)}
+                        key={item.label}
+                        href={item.url}
+                        className={styles.menuItem}
+                      >
+                        {item.icon}
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
 
-            <div className={styles.menuSection}>
-              <button
-                className={styles.accordion}
-                onClick={() => toggleExpand("resources")}
-              >
-                Recursos <BiChevronDown />
+              <div className={styles.menuSection}>
+                <button
+                  className={styles.accordion}
+                  onClick={() => toggleExpand("resources")}
+                >
+                  Recursos <BiChevronDown />
+                </button>
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: expanded === "resources" ? "auto" : 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ overflow: "hidden" }}
+                >
+                  <div className={styles.menuItems}>
+                    {resourcesMenu.map((item) => (
+                      <Link
+                        onClick={() => setIsOpen(false)}
+                        key={item.label}
+                        href={item.url}
+                        className={styles.menuItem}
+                      >
+                        {item.icon}
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </>
+          )}
+          <div className={styles.menuSection}>
+            <Link href="/list/agendamento">
+              <button className={styles.accordion} onClick={() => setIsOpen(false)}>
+                {userType === "COORDINATOR"
+                  ? "Ver Agendamentos"
+                  : "Meus Agendamentos"}
               </button>
-              <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: expanded === "resources" ? "auto" : 0 }}
-                transition={{ duration: 0.3 }}
-                style={{ overflow: "hidden" }}
-              >
-                <div className={styles.menuItems}>
-                  {resourcesMenu.map((item) => (
-                    <Link
-                      onClick={() => setIsOpen(false)}
-                      key={item.label}
-                      href={item.url}
-                      className={styles.menuItem}
-                    >
-                      {item.icon}
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
-          </>)}
+            </Link>
+          </div>
+
           <div className={styles.profileMenu}>
             <button
               onClick={() => setIsOpen(false)}
