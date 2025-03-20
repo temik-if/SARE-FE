@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
 import NavMenu from "@/components/NavMenu/NavMenu";
-import SearchBar from "../SearchBar/SearchBar";
 import useWindowSize from "@/hooks/useWindowSize";
 import MobileDrawerMenu from "../MobileDrawerMenu/MobileDrawerMenu";
 
@@ -16,7 +15,7 @@ export default function Header() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
   const isSmallScreen = useWindowSize();
-
+  console.log(session)
   useEffect(() => {
     if (session) {
       if (session?.user.type == undefined) {
@@ -45,24 +44,18 @@ export default function Header() {
           <Link href="/">
             <Image src="/images/logo.png" alt="Logo" width={170} height={60} />
           </Link>
-          {status === 'unauthenticated' ? (
-            <ButtonSecondary
-                  label="LOGIN"
-                  onClick={handleClick}
-                />
+          {status === "unauthenticated" ? (
+            <ButtonSecondary label="LOGIN" onClick={handleClick} />
           ) : session && isSmallScreen ? (
-            <MobileDrawerMenu userType={session?.user.type}/>
+            <MobileDrawerMenu userType={session?.user.type} />
           ) : (
             <>
               {session?.user ? (
-                session?.user.type === "COORDINATOR" && (
-                  <>
-                    <SearchBar />
-                    <NavMenu userType={session?.user.type!!} />
-                    <ProfileMenu session={session} onLogout={handleLogout} />
-                  </>
-                )
-              ) : null } 
+                <>
+                  <NavMenu userType={session?.user.type} />
+                  <ProfileMenu session={session} onLogout={handleLogout} />
+                </>
+              ) : null}
             </>
           )}
         </div>

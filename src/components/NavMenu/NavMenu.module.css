@@ -1,6 +1,10 @@
 .navMenu {
   display: flex;
   gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+  padding-right: 28px;
 }
 
 .menuItem {
