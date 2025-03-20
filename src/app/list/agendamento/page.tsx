@@ -1,37 +1,88 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { IResource } from "@/types/resource";
-import { resourceService } from "@/service/resourceService";
+import { IBooking, IBookingUpdate } from "@/types/booking";
+import { bookingService } from "@/service/bookingService";
 import CardItem from "@/components/CardItem/Carditem";
-import EditModal from "@/components/UpdateModalRecurso/UpdateModalRecurso";
-import DeleteModalRecurso from "@/components/DeleteModalRecurso/DeleteModalRecurso";
+import EditModal from "@/components/UdpateModalAgendamento/UpdateModalAgendamento";
+import DeleteModalAgendamento from "@/components/DeleteModalAgendamento/DeleteModalAgendamento";
 import styles from "./page.module.css";
+import { userService } from "@/service/userService";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 export default function AgendamentosPage() {
-  const [agendamentos, setAgendamentos] = useState<IResource[]>([]);
+  const [agendamentos, setAgendamentos] = useState<IBooking[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedAgendamento, setSelectedAgendamento] = useState<IResource | null>(null);
+  const [selectedAgendamento, setSelectedAgendamento] = useState<IBooking | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedShift, setSelectedShift] = useState("mes");
+  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAgendamentos();
   }, []);
 
+  useEffect(() => {
+    // Filtra os agendamentos com base na opção selecionada
+    const filterAgendamentos = async () => {
+      try {
+        if (selectedShift === "hoje") {
+          const today = new Date().toISOString().split("T")[0]; // Formato YYYY-MM-DD
+          const data = await bookingService.getByDate(today);
+          setAgendamentos(data);
+        } else if (selectedShift === "mes") {
+          // Busca todos os agendamentos
+          const allBookings = await bookingService.getAll();
+          
+          // Filtra os agendamentos do mês atual
+          const today = new Date();
+          const currentMonth = today.getMonth();
+          const currentYear = today.getFullYear();
+
+          const agendamentosDoMes = allBookings.filter((agendamento) => {
+            const agendamentoDate = new Date(agendamento.date);
+            return (
+              agendamentoDate.getMonth() === currentMonth &&
+              agendamentoDate.getFullYear() === currentYear
+            );
+          });
+
+          setAgendamentos(agendamentosDoMes);
+        } else if (selectedShift === "finalizados") {
+          const data = await bookingService.getByStatus("COMPLETED");
+          setAgendamentos(data);
+        }
+      } catch (error) {
+        console.error("Erro ao filtrar agendamentos:", error);
+      }
+    };
+
+    filterAgendamentos();
+  }, [selectedShift]);
+
   const fetchAgendamentos = async () => {
     try {
-      const data = await resourceService.getAll();
-      setAgendamentos(data);
+      const data = await bookingService.getAllFromLoggedUser();
+      const id = data[0].user_id;
+      const user = await userService.getById(id);
+      setUserType(user.type); // Armazena o tipo de usuário no estado
+
+      if (user.type === "COORDINATOR") {
+        const allBookings = await bookingService.getAll();
+        setAgendamentos(allBookings);
+      } else {
+        setAgendamentos(data);
+      }
     } catch (error) {
-      console.error("Erro ao buscar agendamentos disponíveis:", error);
+      console.error("Erro ao buscar agendamentos:", error);
     }
   };
 
-  const handleOpenDeleteModal = (agendamento: IResource) => {
+  const handleOpenDeleteModal = (agendamento: IBooking) => {
     setSelectedAgendamento(agendamento);
     setIsDeleteModalOpen(true);
   };
@@ -45,60 +96,36 @@ export default function AgendamentosPage() {
     if (!selectedAgendamento) return;
 
     try {
-      await resourceService.updateResourceStatus(String(selectedAgendamento.id), "UNAVAILABLE");
-      setAgendamentos((prev) => prev.filter((item) => item.id !== selectedAgendamento.id));
+      await bookingService.patch(selectedAgendamento.id,"COMPLETED");
+      setAgendamentos((prev) => prev.filter((item) => item.resource_id !== selectedAgendamento.resource_id));
       handleCloseDeleteModal();
-      setSuccessMessage(`O ${selectedAgendamento.equipment ? "equipamento" : "sala"} foi desabilitado com sucesso.`);
+      setSuccessMessage("O agendamento foi concluido com sucesso.");
       setShowSuccessPopup(true);
     } catch (error) {
-      console.error("Erro ao marcar agendamento como indisponível:", error);
+      console.error("Erro ao concluir agendamento:", error);
     }
   };
 
-  const handleEditAgendamento = (agendamento: IResource) => {
+  const handleEditAgendamento = (agendamento: IBooking) => {
     setSelectedAgendamento(agendamento);
     setIsEditModalOpen(true);
   };
 
-  const handleUpdateAgendamento = async (updatedData: Partial<IResource>) => {
+  const handleUpdateAgendamento = async (updatedData: IBookingUpdate) => {
     if (!selectedAgendamento) return;
 
-    // Verifica se houve alterações nos campos
-    const hasChanges =
-      updatedData.name !== selectedAgendamento.name ||
-      updatedData.status !== selectedAgendamento.status ||
-      (updatedData.equipment &&
-        (updatedData.equipment.serial_number !== selectedAgendamento.equipment?.serial_number ||
-          updatedData.equipment.model !== selectedAgendamento.equipment?.model ||
-          updatedData.equipment.brand !== selectedAgendamento.equipment?.brand)) ||
-      (updatedData.room &&
-        updatedData.room.capacity !== selectedAgendamento.room?.capacity);
-
-    if (!hasChanges) {
-      setErrorMessage("Nenhuma alteração foi feita.");
-      setShowErrorPopup(true);
-      return; // Não faz a requisição se não houver alterações
-    }
-
     try {
-      await resourceService.updateResource(String(selectedAgendamento.id), updatedData);
+      await bookingService.update(selectedAgendamento.resource_id, updatedData);
       setAgendamentos((prev) =>
-        prev.map((item) =>
-          item.id === selectedAgendamento.id ? { ...item, ...updatedData } : item
-        )
+        prev.map((item) => (item.resource_id === selectedAgendamento.resource_id ? { ...item, ...updatedData } : item))
       );
       setIsEditModalOpen(false);
-      setSuccessMessage(`O ${selectedAgendamento.equipment ? "equipamento" : "sala"} foi atualizado com sucesso.`);
+      setSuccessMessage("O agendamento foi atualizado com sucesso.");
       setShowSuccessPopup(true);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Erro ao atualizar agendamento:", error);
-      if (error.response && error.response.status === 400) {
-        setErrorMessage("O nome do campo já existe e não pode ser alterado.");
-        setShowErrorPopup(true);
-      } else {
-        setErrorMessage("Ocorreu um erro ao atualizar o recurso. Tente novamente.");
-        setShowErrorPopup(true);
-      }
+      setErrorMessage("Ocorreu um erro ao atualizar o agendamento. Tente novamente.");
+      setShowErrorPopup(true);
     }
   };
 
@@ -106,28 +133,67 @@ export default function AgendamentosPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Lista de Agendamentos</h1>
+        {userType === "COORDINATOR" && (
+          <FormControl>
+            <RadioGroup
+              row
+              className={styles.radioButtonContainer}
+              value={selectedShift}
+              onChange={(event) => setSelectedShift(event.target.value)}
+            >
+              {[
+                { value: "mes", label: "Mês" },
+                { value: "hoje", label: "Hoje" },
+                { value: "finalizados", label: "Finalizados" }
+              ].map(({ value, label }) => (
+                <FormControlLabel
+                  key={value}
+                  value={value}
+                  className={styles.radioButton}
+                  control={<Radio sx={{ "&.Mui-checked": { color: "#E56217" } }} />}
+                  label={label}
+                  sx={{
+                    width: "150px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    transition: "all 0.3s ease",
+                    "& .MuiFormControlLabel-label": {
+                      color: selectedShift === value ? "var(--primary)" : "inherit",
+                      fontWeight: selectedShift === value ? "bold" : "inherit",
+                    },
+                  }}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        )}
       </div>
       <div className={styles.cards}>
         <div className={styles.listcards}>
-          {agendamentos.map((item) => (
-            <CardItem
-              key={item.id}
-              data1={item.name}
-              data2={item.status}
-              type="agendamento"
-              onDelete={() => handleOpenDeleteModal(item)}
-              onEdit={() => handleEditAgendamento(item)}
-            />
-          ))}
+          {agendamentos.length === 0 ? (
+            <p className={styles.noBookingsMessage}>Nenhum agendamento encontrado.</p>
+          ) : (
+            agendamentos.map((item) => (
+              <CardItem
+                key={item.id}
+                data1={item.date}
+                data2={item.shift}
+                type="agendamento"
+                onDelete={() => handleOpenDeleteModal(item)}
+                onEdit={() => handleEditAgendamento(item)}
+              />
+            ))
+          )}
         </div>
       </div>
 
       {selectedAgendamento && isDeleteModalOpen && (
-        <DeleteModalRecurso
+        <DeleteModalAgendamento
           isOpen={isDeleteModalOpen}
           onClose={handleCloseDeleteModal}
           onConfirm={handleConfirmDelete}
-          resource={selectedAgendamento}
+          bookingData={selectedAgendamento}
         />
       )}
 
@@ -135,8 +201,8 @@ export default function AgendamentosPage() {
         <EditModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          resource={selectedAgendamento}
-          onUpdate={handleUpdateAgendamento}
+          bookingData={{ ...selectedAgendamento }} // Converte para IBookingUpdate
+          onConfirm={handleUpdateAgendamento}
         />
       )}
 
@@ -144,10 +210,7 @@ export default function AgendamentosPage() {
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
             <p>{successMessage}</p>
-            <button
-              className={styles.popupButton}
-              onClick={() => setShowSuccessPopup(false)}
-            >
+            <button className={styles.popupButton} onClick={() => setShowSuccessPopup(false)}>
               OK
             </button>
           </div>
@@ -158,10 +221,7 @@ export default function AgendamentosPage() {
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
             <p>{errorMessage}</p>
-            <button
-              className={styles.popupButton}
-              onClick={() => setShowErrorPopup(false)}
-            >
+            <button className={styles.popupButton} onClick={() => setShowErrorPopup(false)}>
               OK
             </button>
           </div>

@@ -1,4 +1,6 @@
 export interface IBooking {
+    id: number;
+    user_id: string;
     resource_id: number;
     shift: "MORNING" | "AFTERNOON" | "EVENING";
     date: string;
@@ -6,7 +8,7 @@ export interface IBooking {
     status: string;
 }
 
-export interface IBookingCreate {
+export interface IBookingCreate { 
     resource_id: number;
     shift: "MORNING" | "AFTERNOON" | "EVENING";
     date: string;
@@ -14,6 +16,8 @@ export interface IBookingCreate {
 }
 
 export interface IBookingUpdate {
+  id?: number;
+  user_id?: string;
   resource_id?: number;
   shift?: "MORNING" | "AFTERNOON" | "EVENING";
   date?: string;

@@ -26,12 +26,12 @@ export default function CardItem({ data1, data2, type, onDelete, onEdit }: CardI
           onClick={onEdit}
           style={{ cursor: 'pointer' }}
         />
-        <RiDeleteBinLine
-          color="#fff"
-          size={24}
-          onClick={onDelete}
-          style={{ cursor: 'pointer' }}
-        />
+          <RiDeleteBinLine
+            color="#fff"
+            size={24}
+            onClick={onDelete}
+            style={{ cursor: 'pointer' }}
+          />
       </div>
     </div>
   );
