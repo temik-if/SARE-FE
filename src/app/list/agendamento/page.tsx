@@ -8,6 +8,7 @@ import EditModal from "@/components/UdpateModalAgendamento/UpdateModalAgendament
 import DeleteModalAgendamento from "@/components/DeleteModalAgendamento/DeleteModalAgendamento";
 import styles from "./page.module.css";
 import { userService } from "@/service/userService";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 export default function AgendamentosPage() {
   const [agendamentos, setAgendamentos] = useState<IBooking[]>([]);
@@ -18,20 +19,58 @@ export default function AgendamentosPage() {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedShift, setSelectedShift] = useState("mes");
+  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAgendamentos();
   }, []);
 
+  useEffect(() => {
+    // Filtra os agendamentos com base na opção selecionada
+    const filterAgendamentos = async () => {
+      try {
+        if (selectedShift === "hoje") {
+          const today = new Date().toISOString().split("T")[0]; // Formato YYYY-MM-DD
+          const data = await bookingService.getByDate(today);
+          setAgendamentos(data);
+        } else if (selectedShift === "mes") {
+          // Busca todos os agendamentos
+          const allBookings = await bookingService.getAll();
+          
+          // Filtra os agendamentos do mês atual
+          const today = new Date();
+          const currentMonth = today.getMonth();
+          const currentYear = today.getFullYear();
+
+          const agendamentosDoMes = allBookings.filter((agendamento) => {
+            const agendamentoDate = new Date(agendamento.date);
+            return (
+              agendamentoDate.getMonth() === currentMonth &&
+              agendamentoDate.getFullYear() === currentYear
+            );
+          });
+
+          setAgendamentos(agendamentosDoMes);
+        } else if (selectedShift === "finalizados") {
+          const data = await bookingService.getByStatus("COMPLETED");
+          setAgendamentos(data);
+        }
+      } catch (error) {
+        console.error("Erro ao filtrar agendamentos:", error);
+      }
+    };
+
+    filterAgendamentos();
+  }, [selectedShift]);
+
   const fetchAgendamentos = async () => {
     try {
       const data = await bookingService.getAllFromLoggedUser();
-    
-      const id = data[0].user_id
-      // Busca o usuário pelo ID
+      const id = data[0].user_id;
       const user = await userService.getById(id);
-  
-      // Verifica o tipo de usuário e faz a busca apropriada
+      setUserType(user.type); // Armazena o tipo de usuário no estado
+
       if (user.type === "COORDINATOR") {
         const allBookings = await bookingService.getAll();
         setAgendamentos(allBookings);
@@ -42,7 +81,6 @@ export default function AgendamentosPage() {
       console.error("Erro ao buscar agendamentos:", error);
     }
   };
-  
 
   const handleOpenDeleteModal = (agendamento: IBooking) => {
     setSelectedAgendamento(agendamento);
@@ -58,13 +96,13 @@ export default function AgendamentosPage() {
     if (!selectedAgendamento) return;
 
     try {
-      await bookingService.delete(selectedAgendamento.id);
+      await bookingService.patch(selectedAgendamento.id,"COMPLETED");
       setAgendamentos((prev) => prev.filter((item) => item.resource_id !== selectedAgendamento.resource_id));
       handleCloseDeleteModal();
-      setSuccessMessage("O agendamento foi cancelado com sucesso.");
+      setSuccessMessage("O agendamento foi concluido com sucesso.");
       setShowSuccessPopup(true);
     } catch (error) {
-      console.error("Erro ao cancelar agendamento:", error);
+      console.error("Erro ao concluir agendamento:", error);
     }
   };
 
@@ -95,19 +133,58 @@ export default function AgendamentosPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Lista de Agendamentos</h1>
+        {userType === "COORDINATOR" && (
+          <FormControl>
+            <RadioGroup
+              row
+              className={styles.radioButtonContainer}
+              value={selectedShift}
+              onChange={(event) => setSelectedShift(event.target.value)}
+            >
+              {[
+                { value: "mes", label: "Mês" },
+                { value: "hoje", label: "Hoje" },
+                { value: "finalizados", label: "Finalizados" }
+              ].map(({ value, label }) => (
+                <FormControlLabel
+                  key={value}
+                  value={value}
+                  className={styles.radioButton}
+                  control={<Radio sx={{ "&.Mui-checked": { color: "#E56217" } }} />}
+                  label={label}
+                  sx={{
+                    width: "150px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    transition: "all 0.3s ease",
+                    "& .MuiFormControlLabel-label": {
+                      color: selectedShift === value ? "var(--primary)" : "inherit",
+                      fontWeight: selectedShift === value ? "bold" : "inherit",
+                    },
+                  }}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        )}
       </div>
       <div className={styles.cards}>
         <div className={styles.listcards}>
-          {agendamentos.map((item) => (
-            <CardItem
-              key={item.id}
-              data1={item.date}
-              data2={item.shift}
-              type="agendamento"
-              onDelete={() => handleOpenDeleteModal(item)}
-              onEdit={() => handleEditAgendamento(item)}
-            />
-          ))}
+          {agendamentos.length === 0 ? (
+            <p className={styles.noBookingsMessage}>Nenhum agendamento encontrado.</p>
+          ) : (
+            agendamentos.map((item) => (
+              <CardItem
+                key={item.id}
+                data1={item.date}
+                data2={item.shift}
+                type="agendamento"
+                onDelete={() => handleOpenDeleteModal(item)}
+                onEdit={() => handleEditAgendamento(item)}
+              />
+            ))
+          )}
         </div>
       </div>
 

@@ -14,6 +14,31 @@
     flex-direction: row;
     justify-content: space-between;
 }
+.radioButtonContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 36px;
+  margin-left: 24px;
+}
+
+.radioButton {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 36px;
+  padding-right: 12px;
+  width: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.radioButton:hover {
+  background: #FAC9AE;
+}
 
 .header button{
     width: 296px;
