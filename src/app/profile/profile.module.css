@@ -1,0 +1,122 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.profileImage {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 50%;
+  margin-bottom: 24px;
+}
+
+.profileImageContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 24px;
+}
+
+.nameContainer {
+  width: 100%;
+  max-width: 768px;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nameInfo {
+  font-family: var(--primary-font);
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.type {
+  margin-top: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--primary-font);
+  font-size: 1.3rem;
+}
+
+.accountInfo {
+  font-family: var(--primary-font);
+  font-size: 1.2rem;
+}
+
+.field {
+    width: 100%;
+    gap: 8px;
+}
+
+.fieldContainer {
+  width: 100%;
+  max-width: 768px;
+  margin: 16px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1.1rem;
+}
+
+.editButton {
+  width: 100%;
+  max-width: 200px;
+  margin-bottom: 24px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: center;
+  transition: all 0.3s;
+  padding: 18px;
+  margin-top: 24px;
+  background-color: var(--primary);
+  flex-grow: 1;
+}
+
+.editButton:hover {
+  background-color: var(--secondary);
+}
+
+.buttonsContainer {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.oneButtonContainer {
+  display: flex;
+  justify-content: center;
+}

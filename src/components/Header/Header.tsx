@@ -15,7 +15,6 @@ export default function Header() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
   const isSmallScreen = useWindowSize();
-  console.log(session)
   useEffect(() => {
     if (session) {
       if (session?.user.type == undefined) {
