@@ -17,6 +17,7 @@ export interface IBookingCreate {
 
 export interface IBookingUpdate {
   id?: number;
+  user_id?: string;
   resource_id?: number;
   shift?: "MORNING" | "AFTERNOON" | "EVENING";
   date?: string;
