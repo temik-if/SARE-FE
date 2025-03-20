@@ -7,6 +7,7 @@ import CardItem from "@/components/CardItem/Carditem";
 import EditModal from "@/components/UdpateModalAgendamento/UpdateModalAgendamento";
 import DeleteModalAgendamento from "@/components/DeleteModalAgendamento/DeleteModalAgendamento";
 import styles from "./page.module.css";
+import { userService } from "@/service/userService";
 
 export default function AgendamentosPage() {
   const [agendamentos, setAgendamentos] = useState<IBooking[]>([]);
@@ -25,11 +26,23 @@ export default function AgendamentosPage() {
   const fetchAgendamentos = async () => {
     try {
       const data = await bookingService.getAllFromLoggedUser();
-      setAgendamentos(data);
+    
+      const id = data[0].user_id
+      // Busca o usuário pelo ID
+      const user = await userService.getById(id);
+  
+      // Verifica o tipo de usuário e faz a busca apropriada
+      if (user.type === "COORDINATOR") {
+        const allBookings = await bookingService.getAll();
+        setAgendamentos(allBookings);
+      } else {
+        setAgendamentos(data);
+      }
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
     }
   };
+  
 
   const handleOpenDeleteModal = (agendamento: IBooking) => {
     setSelectedAgendamento(agendamento);
