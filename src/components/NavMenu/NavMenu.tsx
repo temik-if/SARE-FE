@@ -65,7 +65,7 @@ export default function NavMenu({ userType }: NavMenuProps) {
           </div>
         </>
       )}
-      <div className={styles.menuItem}>
+      {userType && (<div className={styles.menuItem}>
         <NavMenuButton
           onClick={() => {
             setIsBookingMenuOpen(!isBookingMenuOpen);
@@ -78,7 +78,7 @@ export default function NavMenu({ userType }: NavMenuProps) {
             setIsOpen={setIsBookingMenuOpen}
           />
         )}
-      </div>
+      </div>)}
     </div>
   );
 }

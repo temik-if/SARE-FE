@@ -13,7 +13,7 @@ const LoadingOverlay = () => {
     } else {
       const timer = setTimeout(() => {
         setShowOverlay(false); 
-      }, 1000);
+      }, 500);
 
       return () => clearTimeout(timer); 
     }

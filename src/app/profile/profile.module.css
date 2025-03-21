@@ -22,13 +22,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding: 24px;
 }
 
 .nameContainer {
   width: 100%;
-  max-width: 768px;
+  max-width: 640px;
   display: flex;
   margin: auto;
   justify-content: center;
@@ -53,37 +51,61 @@
 }
 
 .accountInfo {
-  font-family: var(--primary-font);
+  width: 100%;
+  font-family: var(--secondary-font);
   font-size: 1.2rem;
+  border-radius: 8px;
+  padding: 12px 8px;
+  background-color: #eee;
+  color: #222;
 }
 
 .field {
-    width: 100%;
-    gap: 8px;
+  width: 100%;
+  gap: 8px;
 }
 
 .fieldContainer {
   width: 100%;
-  max-width: 768px;
+  max-width: 640px;
   margin: 16px auto 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 .field label {
+  margin-top: 12px;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: bold;
   font-size: 1.3rem;
 }
 
 .field input {
   width: 100%;
-  padding: 8px;
+  padding: 12px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1.1rem;
+  font-family: var(--secondary-font);
+}
+
+.field input::placeholder {
+  font-size: 1rem;
+  font-weight: 200;
+  opacity: 0.4;
+}
+
+.field input:focus {
+  outline: 2px solid #ff9c5035;
+}
+
+.inputInfo {
+  text-align: end;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  color: var(--primary);
+  opacity: 0.9;
 }
 
 .editButton {
@@ -119,4 +141,11 @@
 .oneButtonContainer {
   display: flex;
   justify-content: center;
+}
+
+.error {
+    color: var(--error);
+    font-weight: 700;
+    margin-top: 6px;
+    text-align: end;
 }

@@ -49,12 +49,8 @@ export default function Header() {
             <MobileDrawerMenu userType={session?.user.type} />
           ) : (
             <>
-              {session?.user ? (
-                <>
-                  <NavMenu userType={session?.user.type} />
-                  <ProfileMenu session={session} onLogout={handleLogout} />
-                </>
-              ) : null}
+              <NavMenu userType={session?.user.type!!} />
+              <ProfileMenu session={session} onLogout={handleLogout} />
             </>
           )}
         </div>
