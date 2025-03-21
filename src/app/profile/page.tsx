@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { userService } from "../../service/userService";
 import { UserUpdateResponse } from "@/types/user";
 import PopUp from "@/components/PopUp/PopUp";
+import LoadingSessionOverlay from "@/components/LoadingSessionOverlay/LoadingSessionOverlay";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const [firstName, setFirstName] = useState(session?.user.firstName || "");
   const [lastName, setLastName] = useState(session?.user.lastName || "");
   const [fullName, setFullName] = useState(session?.user.name || "");
+  const [email, setEmail] = useState(session?.user.email || "");
   const [userType, setUsertype] = useState(session?.user.type || "");
   const [currentPassword, setCurrentPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,24 +57,33 @@ export default function ProfilePage() {
         return;
       }
 
+      const updateData: any = {
+        first_name: firstName,
+        last_name: lastName,
+      };
+
+      if (userType === "COORDINATOR" && email !== session?.user.email) {
+        updateData.email = email; 
+      }
+
       await userService
-        .updateUser(session?.user.id!!, {
-          first_name: firstName,
-          last_name: lastName,
-        })
+        .updateUser(session?.user.id!!, updateData)
         .then((data) => {
           const updatedData = data as UserUpdateResponse;
-          const updatedFullName = updatedData.full_name;
-          setFullName(updatedFullName);
-          setPopUpMessage(
-            "Dados alterados com sucesso!"
-          );
+        
+          setFullName(updatedData.full_name);
+          setFirstName(updatedData.first_name);
+          setLastName(updatedData.last_name)
+          setEmail(updatedData.email)
+          setPopUpMessage("Dados alterados com sucesso!");
           setIsPopUpOpen(true);
         })
-        .catch((e)=>{
+        .catch((e) => {
           console.log(e);
-          setPopUpMessage("Um erro inesperado aconteceu. Tente novamente mais tarde.")
-          setIsPopUpOpen(true)
+          setPopUpMessage(
+            "Um erro inesperado aconteceu. Tente novamente mais tarde."
+          );
+          setIsPopUpOpen(true);
         });
 
       const updatedSession = await getSession();
@@ -82,11 +93,11 @@ export default function ProfilePage() {
           ...updatedSession?.user,
           firstName,
           lastName,
+          email:
+            userType === "COORDINATOR" ? email : updatedSession?.user.email,
         },
       });
 
-      setFirstName(firstName);
-      setLastName(lastName);
       setCurrentPassword("");
 
       router.refresh();
@@ -101,7 +112,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      {session == undefined && <LoadingOverlay />}
+      {loading && <LoadingOverlay />}
       {isPopUpOpen && (
         <PopUp
           message={popUpMessage}
@@ -171,7 +182,8 @@ export default function ProfilePage() {
                       disabled={userType != "COORDINATOR"}
                       type="email"
                       id="email"
-                      defaultValue={session?.user?.email || ""}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                     {userType !== "COORDINATOR" && (
                       <p className={styles.inputInfo}>

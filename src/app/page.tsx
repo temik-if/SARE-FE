@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import styles from "./page.module.css";
 import Image from 'next/image';
 import Link from 'next/link';
-import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
+import LoadingSessionOverlay from "@/components/LoadingSessionOverlay/LoadingSessionOverlay";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -11,7 +11,7 @@ export default function Home() {
  
   return (
     <div className={styles.page}>
-      <LoadingOverlay />
+      <LoadingSessionOverlay />
       <main className={styles.main}>
         <div className={styles.contentContainer}>
           <div className={styles.textContent}>

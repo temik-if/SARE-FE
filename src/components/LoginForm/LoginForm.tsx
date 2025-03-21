@@ -10,6 +10,7 @@ import * as yup from "yup";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdError } from "react-icons/md";
+import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 
 type LoginFormInput = {
   email: string;
@@ -30,6 +31,7 @@ const LoginForm = () => {
   const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const errorMessages: Record<string, string> = {
     unauthorized: "Seu e-mail não tem permissão para acessar. Contate um administrador.",
@@ -48,16 +50,26 @@ const LoginForm = () => {
   });
 
   const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
+    setLoading(true);
+    setLoginError(""); 
+
+    const timeoutId = setTimeout(() => {
+      setLoginError("Servidor indisponível. Tente novamente em alguns minutos.");
+      setLoading(false);
+    }, 20000);
+
     const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
       redirect: false,
     });
 
+    clearTimeout(timeoutId);
+
     if (result?.error) {
       setLoginError("E-mail ou senha incorretos");
+      setLoading(false)
     } else if (result?.ok) {
-      window.location.reload();
       router.push("/");
     }
   };
@@ -93,6 +105,7 @@ const LoginForm = () => {
 
   return (
     <>
+      {loading && <LoadingOverlay />}
       <div className={styles.container}>
         <h2 className={styles.title}>LOGIN</h2>
 
