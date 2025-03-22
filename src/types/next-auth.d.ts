@@ -8,12 +8,16 @@ declare module "next-auth" {
     isActive: boolean;
     type: string;
     createdAt: string;
+    firstName: string;
+    lastName: string;
   }
 
   interface Session {
     user: {
       id: string;
       name: string;
+      firstName: string;
+      lastName: string;
       profilePicture?: string;
       email: string;
       isActive: boolean;

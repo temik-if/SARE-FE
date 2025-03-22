@@ -26,3 +26,15 @@ export interface UserUpdate {
   password?: string;
   type?: "TEACHER" | "COORDINATOR";
 }
+
+export interface UserUpdateResponse {
+  createdAt: string;
+  email: string;
+  first_name: string;
+  full_name: string;
+  id: string;
+  is_active: boolean;
+  last_name: string;
+  type: string;
+  updatedAt: string;
+}

@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import styles from "./page.module.css";
 import Image from 'next/image';
 import Link from 'next/link';
-import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
+import LoadingSessionOverlay from "@/components/LoadingSessionOverlay/LoadingSessionOverlay";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -11,7 +11,7 @@ export default function Home() {
  
   return (
     <div className={styles.page}>
-      <LoadingOverlay />
+      <LoadingSessionOverlay />
       <main className={styles.main}>
         <div className={styles.contentContainer}>
           <div className={styles.textContent}>
@@ -21,7 +21,7 @@ export default function Home() {
               Sistema de agendamento de recursos educacionais, comece agora o
               seu agendamento.
             </p>
-            <Link href="/agendamentos/novo">
+            <Link href="/bookings/new">
               <button className={styles.scheduleButton}>
                 Realizar Agendamento
               </button>

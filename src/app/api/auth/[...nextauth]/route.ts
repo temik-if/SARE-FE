@@ -38,6 +38,8 @@ const authOptions: NextAuthOptions = {
           if (user && access_token) {
             return {
               id: user.id,
+              firstName: user.first_name,
+              lastName: user.last_name,
               name: user.full_name,
               email: user.email,
               isActive: user.is_active,
@@ -93,6 +95,8 @@ const authOptions: NextAuthOptions = {
 
           user.accessToken = data.access_token;
           user.id = data.user.id;
+          user.firstName = data.user.first_name;
+          user.lastName = data.user.last_name;
           user.name = data.user.full_name;
           user.profilePicture = user.image!!;
           user.email = data.user.email;
@@ -130,6 +134,8 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
         token.name = user.name;
         token.email = user.email;
         token.isActive = user.isActive;
@@ -145,6 +151,8 @@ const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.firstName = token.firstName as string;
+        session.user.lastName = token.lastName as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.type = token.type as string;
