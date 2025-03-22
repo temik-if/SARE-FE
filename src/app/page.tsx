@@ -21,7 +21,7 @@ export default function Home() {
               Sistema de agendamento de recursos educacionais, comece agora o
               seu agendamento.
             </p>
-            <Link href="/agendamentos/novo">
+            <Link href="/bookings/new">
               <button className={styles.scheduleButton}>
                 Realizar Agendamento
               </button>

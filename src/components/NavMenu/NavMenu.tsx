@@ -11,18 +11,18 @@ type NavMenuProps = {
 };
 
 const userOptions = new Map<string, { url: string; icon: JSX.Element }>([
-  ["Cadastro", { url: "/cadastro/user", icon: <FaUserPlus size={18} /> }],
-  ["Listar", { url: "/list/user", icon: <RiFileList2Line size={18} /> }],
+  ["Cadastro", { url: "/users/new", icon: <FaUserPlus size={18} /> }],
+  ["Listar", { url: "/users", icon: <RiFileList2Line size={18} /> }],
 ]);
 
 const resourcesOptions = new Map<string, { url: string; icon: JSX.Element }>([
-  ["Cadastro", { url: "/cadastro/resources", icon: <IoMdAdd size={18} /> }],
-  ["Listar", { url: "/list/resources", icon: <RiFileList2Line size={18} /> }],
+  ["Cadastro", { url: "/resources/new", icon: <IoMdAdd size={18} /> }],
+  ["Listar", { url: "/resources", icon: <RiFileList2Line size={18} /> }],
 ]);
 
 const bookingOptions = new Map<string, { url: string; icon: JSX.Element }>([
-  ["Novo", { url: "/agendamentos/novo", icon: <IoMdAdd size={18} /> }],
-  ["Meus agendamentos", { url: "/list/agendamento", icon: <RiFileList2Line size={18} /> }],
+  ["Novo", { url: "/bookings/new", icon: <IoMdAdd size={18} /> }],
+  ["Meus agendamentos", { url: "/bookings", icon: <RiFileList2Line size={18} /> }],
 ]);
 
 export default function NavMenu({ userType }: NavMenuProps) {

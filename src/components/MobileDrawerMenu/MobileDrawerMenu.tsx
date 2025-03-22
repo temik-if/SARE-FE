@@ -11,19 +11,18 @@ import styles from "./MobileDrawerMenu.module.css";
 import Link from "next/link";
 import { RiCloseFill, RiFileList2Line } from "react-icons/ri";
 import { FaUserPlus } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import ButtonSecondary from "../ButtonSecondary/ButtonSecondary";
 import { useRouter } from "next/navigation";
 
 const userMenu = [
-  { label: "Cadastro", url: "/cadastro/user", icon: <FaUserPlus /> },
-  { label: "Lista", url: "/listuser", icon: <RiFileList2Line /> },
+  { label: "Cadastro", url: "/users/new", icon: <FaUserPlus /> },
+  { label: "Lista", url: "/users", icon: <RiFileList2Line /> },
 ];
 
 const resourcesMenu = [
-  { label: "Cadastro", url: "/cadastro/resources", icon: <IoMdAdd /> },
-  { label: "Lista", url: "/listresources", icon: <RiFileList2Line /> },
+  { label: "Cadastro", url: "/resources/new", icon: <IoMdAdd /> },
+  { label: "Lista", url: "/resources", icon: <RiFileList2Line /> },
 ];
 
 type MobileDrawerMenuProps = {
@@ -140,7 +139,7 @@ export default function MobileDrawerMenu({ userType }: MobileDrawerMenuProps) {
             </>
           )}
           <div className={styles.menuSection}>
-            <Link href="/list/agendamento">
+            <Link href="/bookings">
               <button className={styles.accordion} onClick={() => setIsOpen(false)}>
                 {userType === "COORDINATOR"
                   ? "Ver Agendamentos"
