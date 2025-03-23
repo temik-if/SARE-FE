@@ -2,12 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { IUser, UserUpdate } from "@/types/user";
 import { userService } from "@/service/userService";
-import CardItem from "@/components/CardItem/Carditem";
 import EditModal from "@/components/UdpateModal/UpdateModal";
 import DeleteModal from "@/components/DeleteModal/DeleteModal";
 import styles from "./page.module.css";
+import UserListItem from "@/components/UserListItem/UserListItem";
+import ButtonPrimary from "@/components/ButtonPrimary/ButtonPrimary";
+import { useRouter } from "next/navigation";
+import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
 
 export default function UsersPage() {
+  const router = useRouter();
   const [dataList, setDataList] = useState<IUser[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
@@ -15,17 +19,21 @@ export default function UsersPage() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers(true);
   }, []);
 
   const fetchUsers = async (is_active: boolean) => {
+    setLoading(true);
     try {
       const users = await userService.getActiveUsers(is_active);
       setDataList(users);
+      setLoading(false);
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
+      setLoading(false);
     }
   };
 
@@ -60,11 +68,17 @@ export default function UsersPage() {
     if (!selectedUser) return;
 
     const validData: Partial<UserUpdate> = {};
-    
-    if (updatedData.first_name && updatedData.first_name !== selectedUser.first_name) {
+
+    if (
+      updatedData.first_name &&
+      updatedData.first_name !== selectedUser.first_name
+    ) {
       validData.first_name = updatedData.first_name;
     }
-    if (updatedData.last_name && updatedData.last_name !== selectedUser.last_name) {
+    if (
+      updatedData.last_name &&
+      updatedData.last_name !== selectedUser.last_name
+    ) {
       validData.last_name = updatedData.last_name;
     }
     if (updatedData.type && updatedData.type !== selectedUser.type) {
@@ -87,82 +101,90 @@ export default function UsersPage() {
       setShowSuccessPopup(true);
     } catch (error: any) {
       console.error("Erro ao atualizar usuário:", error);
-      setErrorMessage(error?.message || "Ocorreu um erro ao atualizar o usuário.");
+      setErrorMessage(
+        error?.message || "Ocorreu um erro ao atualizar o usuário."
+      );
       setShowErrorPopup(true);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>Lista de Usuários</h1>
-        <button>Adicionar Usuário</button>
-      </div>
-      <div className={styles.cards}>
-        <div className={styles.listcards}>
+    <>
+      {loading && <LoadingOverlay />}
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h2>Lista de Usuários</h2>
+          <ButtonPrimary
+            label="CADASTRAR NOVO"
+            onClick={() => router.push("/users/new")}
+          />
+        </div>
+
+        <div className={styles.userList}>
           {dataList.map((item) => (
-            <CardItem
+            <UserListItem
               key={item.id}
-              data1={item.full_name}
-              data2={item.email}
-              type="user"
-              onDelete={() => handleOpenDeleteModal(item)}
-              onEdit={() => handleEditUser(item)}
+              user={item}
+              onEdit={handleEditUser}
+              onDelete={handleOpenDeleteModal}
             />
           ))}
         </div>
+
+        {isEditModalOpen && selectedUser && (
+          <EditModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onConfirm={handleUpdateUser}
+            userData={{
+              first_name: selectedUser.first_name,
+              last_name: selectedUser.last_name,
+              email: selectedUser.email,
+              type: selectedUser.type as "TEACHER" | "COORDINATOR",
+            }}
+          />
+        )}
+
+        {selectedUser && isModalOpen && (
+          <DeleteModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onConfirm={handleConfirmDelete}
+            userData={{
+              nome: selectedUser.full_name,
+              email: selectedUser.email,
+            }}
+          />
+        )}
+
+        {showSuccessPopup && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popup}>
+              <p>O usuário foi atualizado com sucesso.</p>
+              <button
+                className={styles.popupButton}
+                onClick={() => setShowSuccessPopup(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showErrorPopup && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popup}>
+              <p>{errorMessage}</p>
+              <button
+                className={styles.popupButton}
+                onClick={() => setShowErrorPopup(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-
-      {isEditModalOpen && selectedUser && (
-        <EditModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onConfirm={handleUpdateUser}
-          userData={{
-            first_name: selectedUser.first_name,
-            last_name: selectedUser.last_name,
-            email: selectedUser.email,
-            type: selectedUser.type as "TEACHER" | "COORDINATOR",
-          }}
-        />
-      )}
-
-      {selectedUser && isModalOpen && (
-        <DeleteModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onConfirm={handleConfirmDelete}
-          userData={{ nome: selectedUser.full_name, email: selectedUser.email }}
-        />
-      )}
-
-      {showSuccessPopup && (
-        <div className={styles.popupOverlay}>
-          <div className={styles.popup}>
-            <p>O usuário foi atualizado com sucesso.</p>
-            <button
-              className={styles.popupButton}
-              onClick={() => setShowSuccessPopup(false)}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showErrorPopup && (
-        <div className={styles.popupOverlay}>
-          <div className={styles.popup}>
-            <p>{errorMessage}</p>
-            <button
-              className={styles.popupButton}
-              onClick={() => setShowErrorPopup(false)}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 }
