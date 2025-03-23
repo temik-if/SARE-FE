@@ -1,0 +1,151 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.profileImage {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 50%;
+  margin-bottom: 24px;
+}
+
+.profileImageContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nameContainer {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nameInfo {
+  font-family: var(--primary-font);
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.type {
+  margin-top: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--primary-font);
+  font-size: 1.3rem;
+}
+
+.accountInfo {
+  width: 100%;
+  font-family: var(--secondary-font);
+  font-size: 1.2rem;
+  border-radius: 8px;
+  padding: 12px 8px;
+  background-color: #eee;
+  color: #222;
+}
+
+.field {
+  width: 100%;
+  gap: 8px;
+}
+
+.fieldContainer {
+  width: 100%;
+  max-width: 640px;
+  margin: 16px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  margin-top: 12px;
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-family: var(--secondary-font);
+}
+
+.field input::placeholder {
+  font-size: 1rem;
+  font-weight: 200;
+  opacity: 0.4;
+}
+
+.field input:focus {
+  outline: 2px solid #ff9c5035;
+}
+
+.inputInfo {
+  text-align: end;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  color: var(--primary);
+  opacity: 0.9;
+}
+
+.editButton {
+  width: 100%;
+  max-width: 200px;
+  margin-bottom: 24px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: center;
+  transition: all 0.3s;
+  padding: 18px;
+  margin-top: 24px;
+  background-color: var(--primary);
+  flex-grow: 1;
+}
+
+.editButton:hover {
+  background-color: var(--secondary);
+}
+
+.buttonsContainer {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.oneButtonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.error {
+    color: var(--error);
+    font-weight: 700;
+    margin-top: 6px;
+    text-align: end;
+}
