@@ -24,6 +24,8 @@ export default function PenaltyForm() {
     days: ''
   });
 
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
   useEffect(() => {
     const fetchUsersWithPenalties = async () => {
       try {
@@ -63,7 +65,6 @@ export default function PenaltyForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação dos campos do formulário
     const newErrors = {
       userId: formData.userId ? '' : 'Usuário é obrigatório',
       description: formData.description.trim() ? '' : 'Descrição é obrigatória',
@@ -72,23 +73,25 @@ export default function PenaltyForm() {
 
     setErrors(newErrors);
 
-    // Se houver erro, não faz a requisição
     if (Object.values(newErrors).some((error) => error !== '')) return;
 
     try {
-      // Criar objeto com os dados para enviar para a API
       const penaltyData = {
         user_id: formData.userId,
         description: formData.description,
         duration: parseInt(formData.days, 10)
       };
 
-      // Enviar a penalidade usando o serviço
       const result = await penaltyService.createPenalty(penaltyData);
       console.log('Penalidade criada:', result);
 
-      // Redirecionar para outra página após sucesso
-      router.push('/');
+      setShowSuccessPopup(true);
+
+      // Redirecionar para outra página após algum tempo (opcional)
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+        router.push('/penalty/new');
+      }, 3000);
     } catch (error) {
       console.error('Erro ao cadastrar penalidade:', error);
       alert('Erro ao cadastrar penalidade. Tente novamente.');
@@ -115,25 +118,24 @@ export default function PenaltyForm() {
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#ddd" },
                 }}
               >
-              {users.map((user) => (
-              <MenuItem key={user.id} value={user.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span>{user.first_name} {user.last_name}</span>
+                {users.map((user) => (
+                  <MenuItem key={user.id} value={user.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span>{user.first_name} {user.last_name}</span>
 
-                {/* Se o usuário tiver penalidades, mostra a bolinha */}
-                {user.penalties !== undefined && user.penalties > 0 && (
-                  <Tooltip title={`Este usuário tem ${user.penalties} penalidade(s)`} arrow>
-                    <Badge
-                      badgeContent={user.penalties}
-                      color="error"
-                      sx={{
-                        marginLeft: "10px",
-                        "& .MuiBadge-badge": { fontSize: "0.75rem" }
-                      }}
-                    />
-                  </Tooltip>
-                )}
-              </MenuItem>
-            ))}
+                    {user.penalties !== undefined && user.penalties > 0 && (
+                      <Tooltip title={`Este usuário tem ${user.penalties} penalidade(s)`} arrow>
+                        <Badge
+                          badgeContent={user.penalties}
+                          color="error"
+                          sx={{
+                            marginLeft: "10px",
+                            "& .MuiBadge-badge": { fontSize: "0.75rem" }
+                          }}
+                        />
+                      </Tooltip>
+                    )}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Box>
@@ -180,6 +182,23 @@ export default function PenaltyForm() {
 
         <button type="submit" className={styles.submitButton}>Aplicar Penalidade</button>
       </form>
+
+      {showSuccessPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <p>Penalidade cadastrada com sucesso.</p>
+            <button
+              className={styles.popupButton}
+              onClick={() => {
+                setShowSuccessPopup(false); 
+                window.location.reload();    
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
