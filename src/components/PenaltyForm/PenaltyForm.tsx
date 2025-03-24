@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/service/userService';
+import { penaltyService } from '@/service/penaltyService';
 import { IUser } from "@/types/user";
+import { IPenalty } from "@/types/penalty"; 
 import styles from './PenaltyForm.module.css';
-import { MenuItem, Select, FormControl, OutlinedInput, Box, SelectChangeEvent } from '@mui/material';
+import { MenuItem, Select, FormControl, OutlinedInput, Box, Badge, Tooltip, SelectChangeEvent } from '@mui/material';
 
 export default function PenaltyForm() {
   const router = useRouter();
@@ -23,15 +25,29 @@ export default function PenaltyForm() {
   });
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUsersWithPenalties = async () => {
       try {
-        const response: IUser[] = await userService.getAll();
-        setUsers(response);
+        const usersResponse: IUser[] = await userService.getAll();
+        const penaltiesResponse: IPenalty[] = await penaltyService.getAll();
+
+        const penaltiesMap: Record<string, number> = {};
+
+        penaltiesResponse.forEach((penalty) => {
+          penaltiesMap[penalty.user_id] = (penaltiesMap[penalty.user_id] || 0) + 1;
+        });
+
+        const usersWithPenalties = usersResponse.map((user) => ({
+          ...user,
+          penalties: penaltiesMap[user.id] || 0,
+        }));
+
+        setUsers(usersWithPenalties);
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
+        console.error('Erro ao buscar usuários e penalidades:', error);
       }
     };
-    fetchUsers();
+
+    fetchUsersWithPenalties();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,11 +100,25 @@ export default function PenaltyForm() {
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#ddd" },
                 }}
               >
-                {users.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.first_name} {user.last_name}
-                  </MenuItem>
-                ))}
+              {users.map((user) => (
+              <MenuItem key={user.id} value={user.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span>{user.first_name} {user.last_name}</span>
+
+                {/* Se o usuário tiver penalidades, mostra a bolinha */}
+                {user.penalties !== undefined && user.penalties > 0 && (
+                  <Tooltip title={`Este usuário tem ${user.penalties} penalidade(s)`} arrow>
+                    <Badge
+                      badgeContent={user.penalties}
+                      color="error"
+                      sx={{
+                        marginLeft: "10px",
+                        "& .MuiBadge-badge": { fontSize: "0.75rem" }
+                      }}
+                    />
+                  </Tooltip>
+                )}
+              </MenuItem>
+            ))}
               </Select>
             </FormControl>
           </Box>
