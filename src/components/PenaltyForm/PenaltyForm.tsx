@@ -128,7 +128,7 @@ export default function PenaltyForm() {
                           badgeContent={user.penalties}
                           color="error"
                           sx={{
-                            marginLeft: "10px",
+                            marginLeft: "20px",
                             "& .MuiBadge-badge": { fontSize: "0.75rem" }
                           }}
                         />
