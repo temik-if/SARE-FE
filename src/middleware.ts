@@ -30,5 +30,7 @@ export const config = {
     "/users",
     "/resources",
     "/profile",
+    "/penalties",
+    "/penalties/new",
   ],
 };
