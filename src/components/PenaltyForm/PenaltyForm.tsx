@@ -62,6 +62,8 @@ export default function PenaltyForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validação dos campos do formulário
     const newErrors = {
       userId: formData.userId ? '' : 'Usuário é obrigatório',
       description: formData.description.trim() ? '' : 'Descrição é obrigatória',
@@ -69,10 +71,23 @@ export default function PenaltyForm() {
     };
 
     setErrors(newErrors);
+
+    // Se houver erro, não faz a requisição
     if (Object.values(newErrors).some((error) => error !== '')) return;
 
     try {
-      console.log('Enviando dados:', formData);
+      // Criar objeto com os dados para enviar para a API
+      const penaltyData = {
+        user_id: formData.userId,
+        description: formData.description,
+        duration: parseInt(formData.days, 10)
+      };
+
+      // Enviar a penalidade usando o serviço
+      const result = await penaltyService.createPenalty(penaltyData);
+      console.log('Penalidade criada:', result);
+
+      // Redirecionar para outra página após sucesso
       router.push('/');
     } catch (error) {
       console.error('Erro ao cadastrar penalidade:', error);
@@ -140,14 +155,26 @@ export default function PenaltyForm() {
 
         <div className={styles.formGroup}>
           <label className={styles.label}>Quantidade de Dias</label>
-          <input
-            type="number"
-            name="days"
-            placeholder="Número de dias"
-            value={formData.days}
-            onChange={handleChange}
-            className={`${styles.input} ${errors.days ? styles.error : ''}`}
-          />
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl sx={{ width: '100%' }}>
+              <Select
+                name="days"
+                value={formData.days}
+                onChange={handleSelectChange}
+                input={<OutlinedInput notched={false} />}
+                sx={{
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#ddd" },
+                  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#ddd" },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#ddd" },
+                }}
+              >
+                <MenuItem value="2">2 dias</MenuItem>
+                <MenuItem value="5">5 dias</MenuItem>
+                <MenuItem value="7">7 dias</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
           {errors.days && <span className={styles.errorMessage}>{errors.days}</span>}
         </div>
 
