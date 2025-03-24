@@ -9,6 +9,7 @@ export interface IUser {
   type: "TEACHER" | "COORDINATOR";
   createdAt: string;
   updatedAt: string;
+  penalties?: number;
 }
 
 export interface IUserCreate {
